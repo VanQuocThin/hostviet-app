@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HostViet — Quản lý Homestay & Khách sạn</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --green:#1A8A5A;--gl:#E8F5EE;--gm:#2ECC85;
+  --dark:#0F1F17;--text:#2D3A30;--muted:#6B7C6E;
+  --border:#E2EDE6;--bg:#F5F8F6;--white:#FFFFFF;
+  --amber:#E8A020;--al:#FEF3D0;--red:#DC2626;
+  --blue:#2563EB;--bl:#EFF6FF;--sw:220px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sw);background:var(--dark);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:50;transition:transform .3s}
+.s-logo{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.08);font-size:18px;font-weight:700;color:#fff;font-family:'Playfair Display',serif;letter-spacing:-.3px}
+.s-logo span{color:var(--gm)}
+.s-prop{padding:10px 14px;margin:10px 10px 0;background:rgba(255,255,255,.06);border-radius:10px;cursor:pointer}
+.s-prop-name{font-size:13px;font-weight:600;color:#fff}
+.s-prop-meta{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}
+.s-section{padding:14px 14px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,.22);text-transform:uppercase;letter-spacing:.8px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 12px;margin:2px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,.5);transition:all .18s;user-select:none}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.nav-item.active{background:rgba(46,204,133,.15);color:var(--gm)}
+.nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.s-bottom{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.07)}
+.s-user{display:flex;align-items:center;gap:10px}
+.s-av{width:30px;height:30px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.s-name{font-size:12px;font-weight:600;color:#fff}
+.s-plan{font-size:10px;color:rgba(255,255,255,.3)}
+.s-logout{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;font-size:16px;padding:4px}
+.s-logout:hover{color:rgba(255,255,255,.7)}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+.pg-title{font-size:15px;font-weight:700;color:var(--dark)}
+.topbar-right{display:flex;gap:8px;align-items:center}
+
+/* ── SCREENS ── */
+.screen{display:none;flex:1}
+.screen.active{display:flex;flex-direction:column}
+
+/* ── SHARED ── */
+.pad{padding:22px 24px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:7px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+label{display:block;font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+input,select,textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:border-color .18s}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,138,90,.08)}
+input::placeholder{color:var(--muted)}
+.btn{padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#156B46;transform:translateY(-1px)}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+.btn-outline:hover{border-color:var(--green);color:var(--green)}
+.btn-dark{background:var(--dark);color:#fff}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700}
+.bg-green{background:var(--gl);color:var(--green)}
+.bg-amber{background:var(--al);color:var(--amber)}
+.bg-blue{background:var(--bl);color:var(--blue)}
+.bg-red{background:#FEE2E2;color:var(--red)}
+.bg-dark{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
+.toggle{width:38px;height:21px;border-radius:99px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s}
+.toggle.on{background:var(--green)}.toggle.off{background:var(--border)}
+.toggle::after{content:'';position:absolute;top:2px;width:17px;height:17px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle.on::after{left:2px;transform:translateX(17px)}.toggle.off::after{left:2px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg)}
+td{padding:10px 10px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(26,138,90,.02)}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:13px;padding:16px 18px}
+.kpi.dark{background:var(--dark);border-color:var(--dark)}
+.kpi-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.kpi.dark .kpi-label{color:rgba(255,255,255,.4)}
+.kpi-val{font-size:22px;font-weight:700;color:var(--dark)}
+.kpi.dark .kpi-val{color:var(--gm)}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.up{color:#16A34A}
+
+/* ── LANDING ── */
+#screen-landing{background:var(--white)}
+.hero{min-height:100vh;display:flex;align-items:center;padding:80px 6%;background:linear-gradient(160deg,#F0FAF5 0%,#FAFCFA 60%)}
+.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:var(--gl);border:1px solid rgba(26,138,90,.2);border-radius:99px;padding:5px 13px;font-size:11px;font-weight:700;color:var(--green);margin-bottom:18px;text-transform:uppercase;letter-spacing:.5px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,4.5vw,52px);line-height:1.15;font-weight:700;color:var(--dark);margin-bottom:18px;letter-spacing:-1px}
+.hero h1 em{font-style:normal;color:var(--green)}
+.hero p{font-size:16px;color:var(--muted);margin-bottom:28px;line-height:1.7;max-width:460px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.hero-note{margin-top:14px;font-size:12px;color:var(--muted)}
+.hero-note::before{content:'✓ ';color:var(--green);font-weight:700}
+.dash-prev{background:var(--dark);border-radius:14px;padding:14px;box-shadow:0 24px 60px rgba(15,31,23,.2)}
+.dp-header{display:flex;align-items:center;gap:5px;margin-bottom:10px}
+.dp-dot{width:9px;height:9px;border-radius:50%}
+.dp-body{background:#1A2E22;border-radius:9px;padding:12px}
+.dp-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}
+.dp-box{background:rgba(255,255,255,.05);border-radius:7px;padding:9px 10px;border:1px solid rgba(255,255,255,.07)}
+.dp-l{font-size:9px;color:rgba(255,255,255,.4);margin-bottom:3px}
+.dp-v{font-size:16px;font-weight:700;color:#fff}
+.dp-v.g{color:var(--gm)}
+.dp-c{font-size:9px;color:var(--gm);margin-top:1px}
+.dp-rooms{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.dp-room{border-radius:5px;padding:7px;text-align:center;font-size:9px;font-weight:600}
+.dp-room.occ{background:rgba(46,204,133,.2);color:var(--gm);border:1px solid rgba(46,204,133,.25)}
+.dp-room.emp{background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.07)}
+.dp-room.cln{background:rgba(232,160,32,.2);color:var(--amber);border:1px solid rgba(232,160,32,.25)}
+.stats-bar{background:var(--dark);padding:18px 6%;display:flex;justify-content:center;gap:56px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-size:26px;font-weight:700;color:var(--gm)}
+.stat-label{font-size:12px;color:rgba(255,255,255,.45);margin-top:2px}
+.feats{padding:72px 6%;max-width:1100px;margin:0 auto;width:100%}
+.section-eye{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,38px);font-weight:700;color:var(--dark);margin-bottom:10px;letter-spacing:-.5px}
+.section-sub{font-size:16px;color:var(--muted);margin-bottom:40px;max-width:500px}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.feat-card{background:var(--white);border:1px solid var(--border);border-radius:13px;padding:22px;transition:all .2s}
+.feat-card:hover{border-color:rgba(26,138,90,.4);transform:translateY(-2px);box-shadow:0 10px 32px rgba(26,138,90,.08)}
+.feat-card.hl{background:var(--dark);border-color:var(--green)}
+.feat-card.hl .feat-title,.feat-card.hl .feat-desc{color:rgba(255,255,255,.85)}
+.feat-card.hl .feat-desc{color:rgba(255,255,255,.55)}
+.feat-icon{font-size:28px;margin-bottom:12px}
+.feat-title{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:7px}
+.feat-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.price-section{padding:72px 6%;max-width:900px;margin:0 auto;width:100%;text-align:center}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:40px;text-align:left}
+.pc{background:var(--white);border:1px solid var(--border);border-radius:15px;padding:26px;position:relative}
+.pc.hot{background:var(--dark);border:2px solid var(--green)}
+.pc-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:3px 12px;border-radius:99px;white-space:nowrap;text-transform:uppercase}
+.pc-name{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.pc.hot .pc-name{color:rgba(255,255,255,.45)}
+.pc-price{font-size:28px;font-weight:700;color:var(--dark);line-height:1}
+.pc.hot .pc-price{color:var(--gm)}
+.pc-unit{font-size:12px;color:var(--muted);margin-bottom:16px;margin-top:2px}
+.pc.hot .pc-unit{color:rgba(255,255,255,.4)}
+.pc-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.pc-list li{font-size:12px;color:var(--text);display:flex;gap:6px}
+.pc.hot .pc-list li{color:rgba(255,255,255,.8)}
+.pc-list li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+.pc-btn{width:100%;margin-top:20px;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border:none;transition:all .18s}
+.pc-btn.green{background:var(--green);color:#fff}
+.pc-btn.green:hover{background:#156B46}
+.pc-btn.outline{background:transparent;border:1.5px solid rgba(26,138,90,.3);color:var(--green)}
+.pc-btn.outline:hover{background:var(--gl)}
+.cta{background:var(--dark);padding:72px 6%;text-align:center}
+.cta h2{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,40px);color:#fff;margin-bottom:14px;letter-spacing:-.5px}
+.cta p{font-size:15px;color:rgba(255,255,255,.5);margin-bottom:28px}
+.cta-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.nav-top{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,252,250,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 5%;height:58px;display:flex;align-items:center;justify-content:space-between}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .18s}
+.nav-links a:hover{color:var(--green)}
+
+/* ── ONBOARDING ── */
+#screen-onboarding .ob-wrap{max-width:580px;margin:0 auto;padding:32px 20px}
+.progress-steps{display:flex;align-items:center;margin-bottom:7px}
+.step-item{display:flex;align-items:center;flex:1}
+.step-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .25s;border:2px solid var(--border);background:#fff;color:var(--muted)}
+.step-circle.done{background:var(--green);border-color:var(--green);color:#fff}
+.step-circle.active{background:#fff;border-color:var(--green);color:var(--green)}
+.step-line{flex:1;height:2px;background:var(--border);transition:background .25s}
+.step-line.done{background:var(--green)}
+.step-labels{display:flex;justify-content:space-between;margin-bottom:28px}
+.step-label{font-size:11px;color:var(--muted);text-align:center;flex:1;font-weight:500}
+.step-label.active{color:var(--green)}
+.step-label.done{color:var(--green)}
+.ob-step{display:none}
+.ob-step.active{display:block;animation:fadeUp .28s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.ob-eye{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px}
+.ob-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--dark);margin-bottom:7px;letter-spacing:-.3px}
+.ob-desc{font-size:14px;color:var(--muted);margin-bottom:26px;line-height:1.6}
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:20px}
+.type-card{border:2px solid var(--border);border-radius:11px;padding:14px 10px;cursor:pointer;transition:all .18s;text-align:center;background:#fff}
+.type-card:hover{border-color:rgba(26,138,90,.4)}
+.type-card.sel{border-color:var(--green);background:var(--gl)}
+.type-emoji{font-size:26px;margin-bottom:7px}
+.type-name{font-size:12px;font-weight:700;color:var(--text)}
+.type-card.sel .type-name{color:var(--green)}
+.type-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.room-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.room-row{display:grid;grid-template-columns:1fr 1fr 96px 32px;gap:8px;align-items:center;background:#fff;border:1.5px solid var(--border);border-radius:9px;padding:9px 12px}
+.room-row input,.room-row select{border:none;padding:3px 0;font-size:13px;background:transparent;box-shadow:none}
+.room-row input:focus,.room-row select:focus{border-bottom:1.5px solid var(--green);box-shadow:none}
+.btn-del{width:28px;height:28px;border-radius:7px;border:none;background:rgba(220,38,38,.08);color:var(--red);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+.btn-del:hover{background:rgba(220,38,38,.15)}
+.btn-add-room{display:flex;align-items:center;gap:7px;border:1.5px dashed var(--border);border-radius:9px;padding:9px 14px;background:transparent;width:100%;font-size:13px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .18s}
+.btn-add-room:hover{border-color:var(--green);color:var(--green)}
+.zalo-connect-box{background:linear-gradient(135deg,#E8F0FF,#F0F4FF);border:1.5px solid #B8CCFF;border-radius:13px;padding:22px;text-align:center;margin-bottom:20px}
+.zalo-logo-big{font-size:44px;margin-bottom:10px}
+.btn-zalo{background:#0068FF;color:#fff;border:none;border-radius:9px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s}
+.btn-zalo:hover{background:#0056CC;transform:translateY(-1px)}
+.zalo-connected-box{background:var(--gl);border:1.5px solid rgba(26,138,90,.3);border-radius:13px;padding:16px;display:none}
+.ob-btn-row{display:flex;gap:10px;margin-top:24px}
+.btn-back-ob{padding:11px 22px;border:1.5px solid var(--border);border-radius:9px;background:transparent;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .18s}
+.btn-back-ob:hover{border-color:var(--muted);color:var(--text)}
+.btn-next-ob{flex:1;padding:11px;background:var(--green);border:none;border-radius:9px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-next-ob:hover{background:#156B46;transform:translateY(-1px);box-shadow:0 6px 18px rgba(26,138,90,.28)}
+.complete-wrap{text-align:center;padding:28px 0}
+.complete-icon{font-size:60px;margin-bottom:18px;animation:bounceIn .5s ease}
+@keyframes bounceIn{0%{transform:scale(.5);opacity:0}80%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.complete-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--dark);margin-bottom:10px}
+.complete-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0 28px}
+.cstat{background:var(--gl);border-radius:11px;padding:14px;text-align:center}
+.cstat-num{font-size:22px;font-weight:700;color:var(--green)}
+.cstat-label{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* ── DASHBOARD ── */
+.room-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.room-card{border-radius:10px;padding:11px;cursor:pointer;border:1.5px solid transparent;transition:all .18s;position:relative}
+.room-card:hover{transform:translateY(-1px)}
+.room-card.occupied{background:#E8F5EE;border-color:rgba(26,138,90,.25)}
+.room-card.available{background:var(--bg);border-color:var(--border)}
+.room-card.cleaning{background:var(--al);border-color:rgba(232,160,32,.3)}
+.room-card.checkin{background:var(--bl);border-color:rgba(37,99,235,.3)}
+.rc-num{font-size:13px;font-weight:700;color:var(--dark)}
+.rc-status{font-size:10px;font-weight:600;margin-top:2px}
+.occupied .rc-status{color:var(--green)}.available .rc-status{color:var(--muted)}.cleaning .rc-status{color:var(--amber)}.checkin .rc-status{color:var(--blue)}
+.rc-guest{font-size:11px;color:var(--muted);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-badge{position:absolute;top:7px;right:7px;font-size:9px;font-weight:700;padding:2px 5px;border-radius:99px}
+.activity-item{padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:9px}
+.activity-item:last-child{border-bottom:none}
+.ai-icon{width:30px;height:30px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px}
+.ai-text{font-size:12px;color:var(--text);line-height:1.4}
+.ai-time{font-size:10px;color:var(--muted);margin-top:2px}
+.price-suggest{background:linear-gradient(135deg,#FEF3D0,#FEF9ED);border:1px solid rgba(232,160,32,.3);border-radius:11px;padding:14px;margin-top:14px}
+.ps-row{display:flex;gap:9px;margin-top:10px}
+
+/* ── BOOKING ── */
+.room-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.room-opt{border:1.5px solid var(--border);border-radius:10px;padding:10px 8px;cursor:pointer;transition:all .18s;text-align:center;background:#fff}
+.room-opt:hover{border-color:rgba(26,138,90,.4)}
+.room-opt.sel{border-color:var(--green);background:var(--gl)}
+.room-opt.occ{opacity:.42;cursor:not-allowed;background:var(--bg)}
+.ro-num{font-size:12px;font-weight:700;color:var(--dark)}
+.room-opt.sel .ro-num{color:var(--green)}
+.ro-type{font-size:10px;color:var(--muted);margin-top:1px}
+.ro-price{font-size:11px;font-weight:600;color:var(--muted);margin-top:3px}
+.room-opt.sel .ro-price{color:var(--green)}
+.ro-occ{font-size:9px;background:var(--bg);color:var(--muted);border-radius:4px;padding:1px 4px;margin-top:2px;display:inline-block}
+.date-row{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end}
+.date-sep{text-align:center;color:var(--muted);font-size:18px;padding-bottom:8px}
+.nights-badge{display:inline-block;background:var(--gl);color:var(--green);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;margin-top:5px}
+.source-grid{display:flex;flex-wrap:wrap;gap:7px}
+.source-opt{border:1.5px solid var(--border);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);background:#fff;transition:all .18s}
+.source-opt:hover{border-color:rgba(26,138,90,.3)}
+.source-opt.sel{border-color:var(--green);background:var(--gl);color:var(--green)}
+.service-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;transition:all .18s;margin-bottom:7px}
+.service-item:hover{border-color:rgba(26,138,90,.3)}
+.service-item.sel{border-color:var(--green);background:var(--gl)}
+.svc-left{display:flex;align-items:center;gap:9px}
+.svc-check{width:19px;height:19px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .18s}
+.service-item.sel .svc-check{background:var(--green);border-color:var(--green);color:#fff}
+.summary-card{background:var(--dark);border-radius:14px;padding:20px;position:sticky;top:62px}
+.sum-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:16px}
+.sum-row{display:flex;justify-content:space-between;margin-bottom:9px}
+.sum-label{font-size:12px;color:rgba(255,255,255,.45)}
+.sum-val{font-size:12px;font-weight:600;color:#fff}
+.sum-div{height:1px;background:rgba(255,255,255,.1);margin:12px 0}
+.sum-total{display:flex;justify-content:space-between;align-items:center}
+.sum-total-price{font-size:22px;font-weight:700;color:var(--gm)}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}
+.pay-opt{border:1.5px solid rgba(255,255,255,.15);border-radius:8px;padding:9px 10px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:7px;background:transparent}
+.pay-opt:hover{border-color:rgba(255,255,255,.3)}
+.pay-opt.sel{border-color:var(--gm);background:rgba(46,204,133,.1)}
+.pay-name{font-size:11px;font-weight:600;color:rgba(255,255,255,.7)}
+.pay-opt.sel .pay-name{color:var(--gm)}
+.zalo-prev-box{background:rgba(0,104,255,.12);border:1px solid rgba(0,104,255,.25);border-radius:11px;padding:12px;margin-top:14px}
+.zalo-prev-header{display:flex;align-items:center;gap:7px;margin-bottom:8px;font-size:11px;font-weight:700;color:#60A5FF}
+.zalo-bubble-sm{background:#fff;border-radius:9px;padding:9px 11px;font-size:11px;color:var(--text);line-height:1.55;border:1px solid rgba(0,104,255,.1)}
+.booking-content{display:grid;grid-template-columns:1fr 300px;gap:16px;padding:22px 24px;align-items:start}
+
+/* ── CALENDAR ── */
+.cal-topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:var(--white);border-bottom:1px solid var(--border)}
+.cal-nav{display:flex;align-items:center;gap:10px}
+.nav-btn{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.nav-btn:hover{border-color:var(--green);color:var(--green)}
+.cal-month{font-size:14px;font-weight:700;color:var(--dark);min-width:130px;text-align:center}
+.cal-legend{display:flex;gap:13px}
+.leg-i{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.leg-d{width:9px;height:9px;border-radius:2px}
+.timeline{overflow-x:auto}
+.tg{min-width:860px}
+.tg-head{display:grid;grid-template-columns:100px repeat(14,1fr);border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:3}
+.tg-rl{padding:9px 14px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;border-right:1px solid var(--border)}
+.tg-day{padding:7px 4px;text-align:center;font-size:11px;border-right:1px solid var(--border)}
+.tg-day-n{font-size:13px;font-weight:700;color:var(--dark)}
+.tg-day-l{font-size:9px;color:var(--muted)}
+.tg-day.today{background:var(--gl)}
+.tg-day.today .tg-day-n{color:var(--green)}
+.tg-row{display:grid;grid-template-columns:100px repeat(14,1fr);border-bottom:1px solid var(--border);min-height:50px;position:relative}
+.tg-room{padding:0 14px;font-size:12px;font-weight:600;color:var(--dark);border-right:1px solid var(--border);display:flex;align-items:center;background:var(--white);gap:4px;flex-direction:column;justify-content:center}
+.tg-rt{font-size:9px;color:var(--muted);font-weight:400}
+.tg-cell{border-right:1px solid var(--border);min-height:50px;position:relative}
+.tg-cell.today-col{background:rgba(26,138,90,.03)}
+.bb{position:absolute;top:7px;left:2px;right:2px;height:34px;border-radius:6px;display:flex;align-items:center;padding:0 7px;font-size:10px;font-weight:600;cursor:pointer;transition:opacity .18s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
+.bb:hover{opacity:.82}
+.bb-blue{background:#DBEAFE;color:#1E40AF;border:1px solid #BFDBFE}
+.bb-green{background:#DCFCE7;color:#166534;border:1px solid #BBF7D0}
+.bb-amber{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
+.bb-red{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
+
+/* CHECKIN QUEUE */
+.ci-queue{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:22px}
+.ci-card{background:var(--white);border:1.5px solid var(--border);border-radius:13px;padding:16px;transition:all .18s}
+.ci-card.urgent{border-color:var(--blue);background:var(--bl)}
+.ci-card.co-card{border-color:var(--amber);background:var(--al)}
+.ci-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:11px}
+.ci-guest{display:flex;align-items:center;gap:9px}
+.ci-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.ci-name{font-size:13px;font-weight:700;color:var(--dark)}
+.ci-phone{font-size:11px;color:var(--muted);margin-top:1px}
+.ci-details{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.ci-det{background:rgba(255,255,255,.6);border-radius:7px;padding:7px 9px}
+.ci-card.urgent .ci-det,.ci-card.co-card .ci-det{background:rgba(255,255,255,.5)}
+.ci-det-l{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.ci-det-v{font-size:12px;font-weight:700;color:var(--dark);margin-top:2px}
+.ci-actions{display:flex;gap:7px}
+.ci-btn{flex:1;padding:8px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s;border:none}
+.ci-btn.green{background:var(--green);color:#fff}.ci-btn.green:hover{background:#156B46}
+.ci-btn.blue{background:var(--blue);color:#fff}.ci-btn.blue:hover{background:#1D4ED8}
+.ci-btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:#fff;border-radius:15px;width:100%;max-width:460px;overflow:hidden;animation:slideUp .22s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:15px;font-weight:700;color:var(--dark)}
+.modal-close{width:30px;height:30px;border-radius:7px;border:none;background:var(--bg);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.modal-body{padding:22px}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:9px}
+.modal-btn{flex:1;padding:10px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border:none;transition:all .18s}
+.modal-btn.primary{background:var(--green);color:#fff}.modal-btn.primary:hover{background:#156B46}
+.modal-btn.secondary{background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+.cccd-area{border:2px dashed var(--border);border-radius:11px;padding:28px;text-align:center;cursor:pointer;transition:all .18s;background:var(--bg)}
+.cccd-area:hover{border-color:var(--green);background:var(--gl)}
+.cccd-result{display:none;background:var(--gl);border:1.5px solid rgba(26,138,90,.3);border-radius:11px;padding:14px;margin-bottom:14px}
+.cccd-fields{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.cccd-f-l{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.cccd-f-v{font-size:12px;font-weight:600;color:var(--dark);margin-top:2px}
+.checkout-line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.checkout-line:last-child{border-bottom:none}
+.checkout-total{display:flex;justify-content:space-between;padding:13px 0;font-size:15px;font-weight:700}
+
+/* ZALO */
+.zalo-status-bar{background:linear-gradient(135deg,#001A4D,#002E8A);border-radius:13px;padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.zoa-info{display:flex;align-items:center;gap:13px}
+.zoa-av{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,#0068FF,#60A5FF);display:flex;align-items:center;justify-content:center;font-size:20px}
+.zoa-name{font-size:15px;font-weight:700;color:#fff}
+.zoa-id{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+.zoa-connected{display:flex;align-items:center;gap:6px;background:rgba(46,204,133,.18);border:1px solid rgba(46,204,133,.35);border-radius:99px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--gm)}
+.zoa-stats{display:flex;gap:22px;flex-wrap:wrap}
+.zoa-stat{text-align:center}
+.zoa-stat-num{font-size:20px;font-weight:700;color:#fff}
+.zoa-stat-l{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
+.auto-card{border:1.5px solid var(--border);border-radius:11px;padding:14px;background:#fff;transition:all .18s;cursor:pointer}
+.auto-card:hover{border-color:rgba(26,138,90,.3)}
+.auto-card.enabled{border-color:rgba(26,138,90,.4);background:var(--gl)}
+.auto-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:9px}
+.auto-name{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:3px}
+.auto-card.enabled .auto-name{color:var(--green)}
+.auto-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.chat-win{background:#F0F2F5;border-radius:11px;padding:14px;height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:9px}
+.chat-msg{max-width:76%;padding:9px 12px;border-radius:11px;font-size:12px;line-height:1.5}
+.chat-msg.user{background:#0068FF;color:#fff;align-self:flex-end;border-radius:11px 11px 2px 11px}
+.chat-msg.bot{background:#fff;color:var(--text);align-self:flex-start;border-radius:11px 11px 11px 2px;border:1px solid rgba(0,0,0,.06)}
+.chat-row{display:flex;gap:8px;margin-top:10px}
+.chat-input{flex:1;padding:9px 13px;border:1.5px solid var(--border);border-radius:99px;font-size:12px;font-family:inherit;outline:none}
+.chat-input:focus{border-color:#0068FF}
+.chat-send{padding:9px 16px;background:#0068FF;color:#fff;border:none;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer}
+.log-table th{font-size:9px}
+.log-table td{font-size:12px}
+
+/* CHANNEL MANAGER */
+.ch-card{border:1.5px solid var(--border);border-radius:11px;padding:14px;background:#fff;transition:all .18s}
+.ch-card:hover{border-color:rgba(26,138,90,.3)}
+.ch-card.connected{border-color:rgba(26,138,90,.4)}
+.ch-card.error{border-color:rgba(220,38,38,.3);background:#FFF8F8}
+.ch-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.ch-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
+.ch-stat{background:var(--bg);border-radius:7px;padding:7px;text-align:center}
+.ch-stat-n{font-size:13px;font-weight:700;color:var(--dark)}
+.ch-stat-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.ch-footer{display:flex;align-items:center;justify-content:space-between}
+.ch-sync{font-size:10px;color:var(--muted)}
+.ch-sync.err{color:var(--red)}
+.avail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px}
+.avail-card{border:1.5px dashed var(--border);border-radius:11px;padding:13px;text-align:center;cursor:pointer;transition:all .18s}
+.avail-card:hover{border-color:rgba(26,138,90,.5);background:var(--gl)}
+.avail-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
+.avail-sub{font-size:10px;color:var(--muted)}
+.avail-btn{margin-top:8px;padding:4px 10px;border:1px solid var(--green);border-radius:5px;font-size:10px;font-weight:700;color:var(--green);background:transparent;cursor:pointer}
+.sync-item{display:flex;align-items:center;gap:9px;padding:7px 11px;background:var(--bg);border-radius:7px;font-size:12px;margin-bottom:7px}
+.sync-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sync-time{color:var(--muted);min-width:76px;font-size:11px}
+
+/* REPORTS */
+.insight-card{border-radius:11px;padding:14px;border:1px solid transparent}
+.insight-card.pos{background:#F0FDF4;border-color:#BBF7D0}
+.insight-card.warn{background:var(--al);border-color:rgba(232,160,32,.3)}
+.insight-card.info{background:var(--bl);border-color:#BFDBFE}
+.ins-title{font-size:12px;font-weight:700;margin-bottom:4px}
+.pos .ins-title{color:#166534}.warn .ins-title{color:#92400E}.info .ins-title{color:#1E40AF}
+.ins-body{font-size:11px;line-height:1.5}
+.pos .ins-body{color:#15803D}.warn .ins-body{color:#B45309}.info .ins-body{color:#1D4ED8}
+.ch-bar-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.ch-bar-row:last-child{border-bottom:none}
+.ch-bar-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.ch-bar-name{font-size:12px;font-weight:600;color:var(--dark);flex:1}
+.ch-bar-wrap{flex:1;height:5px;background:var(--bg);border-radius:99px;overflow:hidden}
+.ch-bar-fill{height:100%;border-radius:99px;transition:width .6s ease}
+.ch-bar-bk{min-width:56px;text-align:right;font-size:12px;color:var(--muted)}
+.ch-bar-rev{min-width:82px;text-align:right;font-size:12px;font-weight:700;color:var(--dark)}
+.zs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.zs-box{background:var(--bg);border-radius:9px;padding:12px;text-align:center}
+.zs-num{font-size:20px;font-weight:700;color:var(--blue)}
+.zs-label{font-size:10px;color:var(--muted);margin-top:2px}
+.zs-rate{font-size:11px;font-weight:600;color:#16A34A;margin-top:3px}
+
+/* GUESTS */
+.tab-bar{display:flex;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:18px}
+.tab-btn{flex:1;padding:7px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);border:none;background:transparent;font-family:inherit;transition:all .18s}
+.tab-btn.active{background:var(--white);color:var(--dark);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.guest-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.g1{background:var(--green)}.g2{background:var(--blue)}.g3{background:#7C3AED}.g4{background:var(--amber)}.g5{background:var(--red)}.g6{background:#059669}
+.guest-cell{display:flex;align-items:center;gap:9px}
+.guest-name{font-size:13px;font-weight:700;color:var(--dark)}
+.guest-phone{font-size:10px;color:var(--muted);margin-top:1px}
+.staff-card{border:1.5px solid var(--border);border-radius:11px;padding:16px;background:#fff}
+.staff-header{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.staff-av{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+.staff-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}
+.ss-box{background:var(--bg);border-radius:7px;padding:7px;text-align:center}
+.ss-num{font-size:13px;font-weight:700;color:var(--dark)}
+.ss-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:1px}
+.staff-footer{display:flex;align-items:center;justify-content:space-between}
+.status-on{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--green)}
+.status-on::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block}
+.status-off{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--muted)}
+.status-off::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--muted);display:inline-block}
+.s-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.s-item:last-child{border-bottom:none}
+.s-label{font-size:13px;font-weight:600;color:var(--text)}
+.s-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.s-input{padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;outline:none;transition:border-color .18s}
+.s-input:focus{border-color:var(--green)}
+
+/* RESPONSIVE */
+@media(max-width:820px){
+  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .room-grid,.room-picker{grid-template-columns:repeat(3,1fr)}
+  .booking-content{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+  .hero-inner{grid-template-columns:1fr}
+  .dash-prev{display:none}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="s-logo">Host<span>Viet</span></div>
+  <div class="s-prop">
+    <div class="s-prop-name">Sunrise Homestay</div>
+    <div class="s-prop-meta">Đà Nẵng · 8 phòng · Gói Pro</div>
+  </div>
+  <div class="s-section">Vận hành</div>
+  <div class="nav-item active" onclick="nav('dashboard')"><span class="nav-icon">🏠</span>Tổng quan</div>
+  <div class="nav-item" onclick="nav('calendar')"><span class="nav-icon">📅</span>Lịch đặt phòng</div>
+  <div class="nav-item" onclick="nav('booking')"><span class="nav-icon">➕</span>Tạo đặt phòng</div>
+  <div class="nav-item" onclick="nav('guests')"><span class="nav-icon">👥</span>Khách hàng</div>
+  <div class="s-section">Doanh thu</div>
+  <div class="nav-item" onclick="nav('channels')"><span class="nav-icon">🔗</span>Kênh OTA</div>
+  <div class="nav-item" onclick="nav('reports')"><span class="nav-icon">📊</span>Báo cáo</div>
+  <div class="s-section">Cài đặt</div>
+  <div class="nav-item" onclick="nav('zalo')"><span class="nav-icon">💬</span>Zalo OA</div>
+  <div class="nav-item" onclick="nav('settings')"><span class="nav-icon">⚙️</span>Cài đặt</div>
+  <div class="s-bottom">
+    <div class="s-user">
+      <div class="s-av">NT</div>
+      <div><div class="s-name">Nguyễn Thành</div><div class="s-plan">Gói Pro · 30 ngày</div></div>
+      <button class="s-logout" onclick="nav('landing')" title="Đăng xuất">→</button>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main" id="main">
+
+<!-- ════════════════════════════════════
+     LANDING PAGE
+════════════════════════════════════ -->
+<div class="screen active" id="screen-landing" style="display:block;flex-direction:column;background:var(--white)">
+  <nav class="nav-top">
+    <div class="s-logo" style="font-family:'Playfair Display',serif;font-size:20px">Host<span style="color:var(--green)">Viet</span></div>
+    <div class="nav-links">
+      <a href="#features" onclick="scrollTo({top:700,behavior:'smooth'});return false">Tính năng</a>
+      <a href="#pricing" onclick="scrollTo({top:2200,behavior:'smooth'});return false">Bảng giá</a>
+    </div>
+    <button class="btn btn-green" onclick="nav('onboarding')">Dùng thử miễn phí →</button>
+  </nav>
+  <div class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge"><span style="font-size:8px;animation:pulse 2s infinite">●</span> Ra mắt 2025</div>
+        <h1>Quản lý homestay <em>đơn giản</em> như nhắn Zalo</h1>
+        <p>Phần mềm duy nhất tại Việt Nam tích hợp Zalo OA, gợi ý giá AI và onboard trong 15 phút — không cần gọi hotline.</p>
+        <div class="hero-actions">
+          <button class="btn btn-green" style="font-size:15px;padding:13px 26px" onclick="nav('onboarding')">Dùng thử miễn phí 30 ngày</button>
+          <button class="btn btn-outline" style="font-size:15px;padding:13px 26px" onclick="nav('dashboard')">Xem demo →</button>
+        </div>
+        <div class="hero-note">Miễn phí mãi mãi cho đến 3 phòng. Không cần thẻ tín dụng.</div>
+      </div>
+      <div class="dash-prev">
+        <div class="dp-header">
+          <div class="dp-dot" style="background:#FF5F57"></div>
+          <div class="dp-dot" style="background:#FEBC2E"></div>
+          <div class="dp-dot" style="background:#28C840"></div>
+          <span style="margin-left:8px;font-size:11px;color:rgba(255,255,255,.3)">HostViet Dashboard</span>
+        </div>
+        <div class="dp-body">
+          <div class="dp-kpi">
+            <div class="dp-box"><div class="dp-l">Doanh thu hôm nay</div><div class="dp-v g">4.2tr</div><div class="dp-c">↑ 18%</div></div>
+            <div class="dp-box"><div class="dp-l">Phòng đang có khách</div><div class="dp-v">6/8</div><div class="dp-c" style="color:rgba(255,255,255,.4)">75%</div></div>
+            <div class="dp-box"><div class="dp-l">Booking mới</div><div class="dp-v g">3</div><div class="dp-c">2 qua Zalo</div></div>
+          </div>
+          <div class="dp-rooms">
+            <div class="dp-room occ"><div>P.101</div><div style="font-size:8px;margin-top:2px">Có khách</div></div>
+            <div class="dp-room occ"><div>P.102</div><div style="font-size:8px;margin-top:2px">Có khách</div></div>
+            <div class="dp-room emp"><div>P.103</div><div style="font-size:8px;margin-top:2px">Trống</div></div>
+            <div class="dp-room cln"><div>P.104</div><div style="font-size:8px;margin-top:2px">Dọn phòng</div></div>
+            <div class="dp-room occ"><div>P.201</div><div style="font-size:8px;margin-top:2px">Có khách</div></div>
+            <div class="dp-room occ"><div>P.202</div><div style="font-size:8px;margin-top:2px">Có khách</div></div>
+            <div class="dp-room emp"><div>P.203</div><div style="font-size:8px;margin-top:2px">Trống</div></div>
+            <div class="dp-room occ"><div>P.204</div><div style="font-size:8px;margin-top:2px">Có khách</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num">15 phút</div><div class="stat-label">Thời gian setup</div></div>
+    <div class="stat-item"><div class="stat-num">60+</div><div class="stat-label">Kênh OTA</div></div>
+    <div class="stat-item"><div class="stat-num">Zalo</div><div class="stat-label">Tích hợp sâu</div></div>
+    <div class="stat-item"><div class="stat-num">35K</div><div class="stat-label">đ/phòng/tháng</div></div>
+  </div>
+  <div class="feats" id="features">
+    <div class="section-eye">Tính năng</div>
+    <div class="section-title">Tất cả những gì bạn cần</div>
+    <div class="section-sub">Thiết kế riêng cho homestay Việt Nam — không phải bản dịch từ phần mềm nước ngoài.</div>
+    <div class="feat-grid">
+      <div class="feat-card hl"><div class="feat-icon">💬</div><div class="feat-title">Zalo OA tự động 100%</div><div class="feat-desc" style="color:rgba(255,255,255,.6)">Xác nhận, nhắc check-in, cảm ơn — tất cả tự động qua Zalo. Đối thủ chưa có.</div></div>
+      <div class="feat-card"><div class="feat-icon">🏠</div><div class="feat-title">Sơ đồ phòng kéo-thả</div><div class="feat-desc">Nhìn vào biết ngay phòng nào trống, có khách, đang dọn. 1 ngón tay thao tác.</div></div>
+      <div class="feat-card"><div class="feat-icon">📱</div><div class="feat-title">Check-in 10 giây</div><div class="feat-desc">Quét CCCD bằng camera điện thoại → tự điền thông tin → xác nhận 1 chạm.</div></div>
+      <div class="feat-card"><div class="feat-icon">📊</div><div class="feat-title">Gợi ý giá AI</div><div class="feat-desc">Phân tích lịch lễ Việt Nam và công suất phòng → gợi ý tăng/giảm giá đúng lúc.</div></div>
+      <div class="feat-card"><div class="feat-icon">🔗</div><div class="feat-title">Đồng bộ 60+ OTA</div><div class="feat-desc">Booking.com, Agoda, Airbnb, Traveloka, Mytour — real-time, không overbooking.</div></div>
+      <div class="feat-card"><div class="feat-icon">📋</div><div class="feat-title">Khai báo lưu trú tự động</div><div class="feat-desc">Xuất file đúng mẫu Bộ Công An chỉ 1 click. Không nhập tay, không sai sót.</div></div>
+    </div>
+  </div>
+  <div class="price-section" id="pricing">
+    <div class="section-eye">Bảng giá</div>
+    <div class="section-title">Rõ ràng, không phí ẩn</div>
+    <div class="pricing-grid">
+      <div class="pc">
+        <div class="pc-name">Starter</div>
+        <div class="pc-price">Miễn phí</div>
+        <div class="pc-unit">mãi mãi · đến 3 phòng</div>
+        <ul class="pc-list">
+          <li>Sơ đồ phòng & check-in/out</li><li>Tính tiền tự động</li>
+          <li>Báo cáo cơ bản</li><li>Zalo xác nhận booking</li><li>Thanh toán QR</li>
+        </ul>
+        <button class="pc-btn outline" onclick="nav('onboarding')">Bắt đầu miễn phí</button>
+      </div>
+      <div class="pc hot">
+        <div class="pc-tag">Được chọn nhiều nhất</div>
+        <div class="pc-name">Pro</div>
+        <div class="pc-price">35.000đ</div>
+        <div class="pc-unit">/ phòng / tháng</div>
+        <ul class="pc-list">
+          <li>Tất cả Starter</li><li>Channel Manager 60+ OTA</li>
+          <li>Zalo automation đầy đủ</li><li>Gợi ý giá AI</li>
+          <li>Website đặt phòng riêng</li><li>Khai báo lưu trú tự động</li>
+        </ul>
+        <button class="pc-btn green" onclick="nav('onboarding')">Dùng thử 30 ngày miễn phí</button>
+      </div>
+      <div class="pc">
+        <div class="pc-name">Business</div>
+        <div class="pc-price">55.000đ</div>
+        <div class="pc-unit">/ phòng / tháng</div>
+        <ul class="pc-list">
+          <li>Tất cả Pro</li><li>AI Chatbot tiếng Việt</li>
+          <li>Co-host nhiều chủ</li><li>Google Hotel Ads</li>
+          <li>Upsell tự động qua Zalo</li><li>Hóa đơn điện tử VAT</li>
+        </ul>
+        <button class="pc-btn outline" onclick="alert('Liên hệ: 0905 123 456 hoặc Zalo')">Liên hệ tư vấn</button>
+      </div>
+    </div>
+  </div>
+  <div class="cta">
+    <h2>Sẵn sàng tăng doanh thu<br>từ tháng này?</h2>
+    <p>Setup trong 15 phút. Miễn phí 30 ngày. Không cần thẻ tín dụng.</p>
+    <div class="cta-btns">
+      <button class="btn" style="background:var(--gm);color:var(--dark);font-size:15px;padding:14px 28px;font-weight:700" onclick="nav('onboarding')">Bắt đầu miễn phí ngay</button>
+      <button class="btn" style="background:#0068FF;color:#fff;font-size:15px;padding:14px 28px" onclick="alert('Chat Zalo: 0905 123 456')">💬 Chat Zalo tư vấn</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     ONBOARDING
+════════════════════════════════════ -->
+<div class="screen" id="screen-onboarding">
+  <div style="background:var(--white);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between">
+    <div class="s-logo" style="font-family:'Playfair Display',serif;font-size:18px">Host<span style="color:var(--green)">Viet</span></div>
+    <button class="btn btn-outline" style="font-size:12px" onclick="nav('dashboard')">Bỏ qua →</button>
+  </div>
+  <div style="overflow-y:auto;flex:1;background:linear-gradient(160deg,#F0FAF5,#FAFCFA)">
+    <div class="ob-wrap">
+      <div class="progress-steps">
+        <div class="step-item"><div class="step-circle active" id="sc1">1</div><div class="step-line" id="sl1"></div></div>
+        <div class="step-item"><div class="step-circle" id="sc2">2</div><div class="step-line" id="sl2"></div></div>
+        <div class="step-item"><div class="step-circle" id="sc3">3</div><div class="step-line" id="sl3"></div></div>
+        <div class="step-item" style="flex:0"><div class="step-circle" id="sc4">4</div></div>
+      </div>
+      <div class="step-labels">
+        <span class="step-label active" id="sl-1">Cơ sở</span>
+        <span class="step-label" id="sl-2">Phòng</span>
+        <span class="step-label" id="sl-3">Zalo</span>
+        <span class="step-label" id="sl-4">Xong!</span>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="ob-step active" id="ob1">
+        <div class="ob-eye">Bước 1 / 4</div>
+        <div class="ob-title">Cơ sở của bạn là gì?</div>
+        <div class="ob-desc">Chỉ mất 2 phút để thiết lập. Thông tin này giúp chúng tôi cài đặt đúng loại hình.</div>
+        <div style="margin-bottom:16px">
+          <label>Loại hình lưu trú</label>
+          <div class="type-grid">
+            <div class="type-card sel" onclick="selectType(this)"><div class="type-emoji">🏠</div><div class="type-name">Homestay</div><div class="type-sub">1–20 phòng</div></div>
+            <div class="type-card" onclick="selectType(this)"><div class="type-emoji">🏨</div><div class="type-name">Khách sạn</div><div class="type-sub">Từ 10 phòng</div></div>
+            <div class="type-card" onclick="selectType(this)"><div class="type-emoji">🏡</div><div class="type-name">Villa</div><div class="type-sub">Nguyên căn</div></div>
+          </div>
+        </div>
+        <div class="grid2" style="margin-bottom:14px">
+          <div><label>Tên cơ sở</label><input id="ob-name" placeholder="VD: Sunrise Homestay Đà Nẵng"></div>
+          <div><label>Tỉnh / Thành phố</label>
+            <select id="ob-city"><option value="">Chọn...</option>
+              <option>Đà Nẵng</option><option>Hà Nội</option><option>TP. Hồ Chí Minh</option>
+              <option>Hội An</option><option>Đà Lạt</option><option>Phú Quốc</option>
+              <option>Nha Trang</option><option>Huế</option><option>Hạ Long</option><option>Khác</option>
+            </select>
+          </div>
+        </div>
+        <div><label>Số điện thoại</label><input id="ob-phone" type="tel" placeholder="09x xxx xxxx"></div>
+        <div class="ob-btn-row"><button class="btn-next-ob" onclick="obNext(2)">Tiếp theo →</button></div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="ob-step" id="ob2">
+        <div class="ob-eye">Bước 2 / 4</div>
+        <div class="ob-title">Thêm phòng của bạn</div>
+        <div class="ob-desc">Nhập các phòng muốn quản lý. Có thể thêm/sửa sau bất kỳ lúc nào.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 96px 32px;gap:8px;padding:0 12px;margin-bottom:5px">
+          <span style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Tên phòng</span>
+          <span style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Loại phòng</span>
+          <span style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Giá/đêm</span>
+          <span></span>
+        </div>
+        <div class="room-list" id="ob-room-list">
+          <div class="room-row">
+            <input placeholder="VD: Phòng 101" value="Phòng 101">
+            <select><option>Standard</option><option>Deluxe</option><option>Suite</option><option>Gia đình</option></select>
+            <input placeholder="350,000" value="350,000" style="text-align:right">
+            <button class="btn-del" onclick="removeRoom(this)">×</button>
+          </div>
+          <div class="room-row">
+            <input placeholder="VD: Phòng 102" value="Phòng 102">
+            <select><option>Standard</option><option selected>Deluxe</option><option>Suite</option><option>Gia đình</option></select>
+            <input placeholder="500,000" value="500,000" style="text-align:right">
+            <button class="btn-del" onclick="removeRoom(this)">×</button>
+          </div>
+        </div>
+        <button class="btn-add-room" onclick="addRoom()"><span style="font-size:18px">+</span>Thêm phòng</button>
+        <div class="ob-btn-row">
+          <button class="btn-back-ob" onclick="obNext(1)">← Quay lại</button>
+          <button class="btn-next-ob" onclick="obNext(3)">Tiếp theo →</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="ob-step" id="ob3">
+        <div class="ob-eye">Bước 3 / 4</div>
+        <div class="ob-title">Kết nối Zalo OA</div>
+        <div class="ob-desc">Đây là tính năng độc đáo nhất của HostViet — tự động nhắn tin khách qua Zalo.</div>
+        <div class="zalo-connect-box" id="ob-zalo-box">
+          <div class="zalo-logo-big">💬</div>
+          <div style="font-size:15px;font-weight:700;color:#0068FF;margin-bottom:7px">Kết nối Zalo Official Account</div>
+          <div style="font-size:12px;color:#4B5E8A;line-height:1.6;margin-bottom:18px">Sau khi kết nối, HostViet tự gửi xác nhận đặt phòng, nhắc check-in và cảm ơn khách — 100% tự động.</div>
+          <button class="btn-zalo" onclick="connectZalo()">💬 Kết nối Zalo OA ngay</button>
+          <div><button onclick="obNext(4)" style="margin-top:12px;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:inherit">Bỏ qua, kết nối sau</button></div>
+        </div>
+        <div class="zalo-connected-box" id="ob-zalo-done">
+          <div style="display:flex;align-items:center;gap:11px"><span style="font-size:28px">✅</span><div><div style="font-size:13px;font-weight:700;color:var(--dark)">Sunrise Homestay Đà Nẵng</div><div style="font-size:11px;color:var(--green);margin-top:2px">Zalo OA đã kết nối thành công!</div></div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+            <div style="background:#fff;border:1px solid var(--border);border-radius:9px;padding:10px;font-size:11px;font-weight:600;display:flex;gap:7px;align-items:center">✅ Xác nhận booking</div>
+            <div style="background:#fff;border:1px solid var(--border);border-radius:9px;padding:10px;font-size:11px;font-weight:600;display:flex;gap:7px;align-items:center">⏰ Nhắc check-in</div>
+            <div style="background:#fff;border:1px solid var(--border);border-radius:9px;padding:10px;font-size:11px;font-weight:600;display:flex;gap:7px;align-items:center">🔑 Hướng dẫn check-in</div>
+            <div style="background:#fff;border:1px solid var(--border);border-radius:9px;padding:10px;font-size:11px;font-weight:600;display:flex;gap:7px;align-items:center">⭐ Xin đánh giá</div>
+          </div>
+        </div>
+        <div class="ob-btn-row" style="margin-top:18px">
+          <button class="btn-back-ob" onclick="obNext(2)">← Quay lại</button>
+          <button class="btn-next-ob" onclick="obNext(4)">Tiếp theo →</button>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="ob-step" id="ob4">
+        <div class="complete-wrap">
+          <div class="complete-icon">🎉</div>
+          <div class="complete-title">Sẵn sàng rồi!</div>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:0">HostViet đã được cài đặt xong. Bắt đầu nhận đặt phòng ngay hôm nay.</p>
+          <div class="complete-stats">
+            <div class="cstat"><div class="cstat-num" id="ob-room-count">2</div><div class="cstat-label">Phòng đã thêm</div></div>
+            <div class="cstat"><div class="cstat-num">60+</div><div class="cstat-label">OTA sẵn kết nối</div></div>
+            <div class="cstat"><div class="cstat-num" id="ob-zalo-count">4</div><div class="cstat-label">Tin Zalo tự động</div></div>
+          </div>
+          <button class="btn btn-green" style="width:100%;padding:14px;font-size:15px" onclick="nav('dashboard')">Vào Dashboard ngay →</button>
+          <div style="margin-top:10px;font-size:12px;color:var(--muted)">Hoặc <a href="#" style="color:var(--green);font-weight:600">xem video hướng dẫn 3 phút</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     DASHBOARD
+════════════════════════════════════ -->
+<div class="screen" id="screen-dashboard">
+  <div class="topbar">
+    <div class="pg-title">🏠 Tổng quan hôm nay</div>
+    <div class="topbar-right">
+      <span style="font-size:11px;color:var(--muted);background:var(--bg);padding:4px 10px;border-radius:6px;border:1px solid var(--border)">Thứ 7, 21/06/2025</span>
+      <button class="btn btn-green" onclick="openCheckinModal('Khách mới','Phòng mới')">+ Check-in nhanh</button>
+    </div>
+  </div>
+  <div class="pad" style="overflow-y:auto;flex:1">
+    <div class="kpi-row">
+      <div class="kpi dark"><div class="kpi-label">Doanh thu hôm nay</div><div class="kpi-val">4.200.000đ</div><div class="kpi-sub" style="color:var(--gm)">↑ 18% so hôm qua</div></div>
+      <div class="kpi"><div class="kpi-label">Công suất phòng</div><div class="kpi-val">75%</div><div class="kpi-sub">6/8 phòng có khách</div></div>
+      <div class="kpi"><div class="kpi-label">Booking tháng này</div><div class="kpi-val">23</div><div class="kpi-sub up">↑ 3 so tháng trước</div></div>
+      <div class="kpi"><div class="kpi-label">Zalo đã gửi</div><div class="kpi-val">47</div><div class="kpi-sub" style="color:var(--blue)">💬 Tuần này</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:14px">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Sơ đồ phòng</div>
+          <button class="btn btn-outline" style="font-size:11px;padding:5px 12px" onclick="nav('calendar')">Xem lịch →</button>
+        </div>
+        <div style="display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:8px;height:8px;border-radius:2px;background:var(--green)"></div>Có khách</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:8px;height:8px;border-radius:2px;background:#D1D5DB"></div>Trống</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:8px;height:8px;border-radius:2px;background:var(--amber)"></div>Đang dọn</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:8px;height:8px;border-radius:2px;background:var(--blue)"></div>Check-in hôm nay</div>
+        </div>
+        <div class="room-grid">
+          <div class="room-card occupied" onclick="alert('P.101 — Nguyễn Văn A\nCheck-in: 20/06 | Check-out: 22/06\n700.000đ · Đã thanh toán ✓')"><div class="rc-num">P.101</div><div class="rc-status">Có khách</div><div class="rc-guest">Nguyễn Văn A</div><span class="rc-badge bg-green">Đêm 2/3</span></div>
+          <div class="room-card checkin" onclick="openCheckinModal('Trần Thị B','P.102')"><div class="rc-num">P.102</div><div class="rc-status">Check-in hôm nay</div><div class="rc-guest">Trần Thị B</div><span class="rc-badge bg-blue">14:00</span></div>
+          <div class="room-card available" onclick="nav('booking')"><div class="rc-num">P.103</div><div class="rc-status">Trống</div><div class="rc-guest">Nhấn để đặt</div></div>
+          <div class="room-card cleaning" onclick="alert('P.104 đang dọn phòng\nNhân viên: Minh\nDự kiến xong: 11:00')"><div class="rc-num">P.104</div><div class="rc-status">Đang dọn</div><div class="rc-guest">Dự kiến xong 11:00</div><span class="rc-badge bg-amber">~30p</span></div>
+          <div class="room-card occupied" onclick="alert('P.201 — Lê Minh C\n500.000đ · Đã TT')"><div class="rc-num">P.201</div><div class="rc-status">Có khách</div><div class="rc-guest">Lê Minh C</div></div>
+          <div class="room-card occupied" onclick="alert('P.202 — Phạm Thu D\n3 đêm · 1.500.000đ')"><div class="rc-num">P.202</div><div class="rc-status">Có khách</div><div class="rc-guest">Phạm Thu D</div><span class="rc-badge bg-green">Đêm 3/3</span></div>
+          <div class="room-card occupied" onclick="openCheckoutModal()"><div class="rc-num">P.203</div><div class="rc-status">Có khách</div><div class="rc-guest">Hoàng Văn E</div></div>
+          <div class="room-card available" onclick="nav('booking')"><div class="rc-num">P.204</div><div class="rc-status">Trống</div><div class="rc-guest">Booking ngày mai</div></div>
+        </div>
+        <div class="price-suggest">
+          <div style="display:flex;gap:9px;align-items:flex-start">
+            <span style="font-size:20px">💡</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:3px">Gợi ý tăng giá — Cuối tuần này</div>
+              <div style="font-size:11px;color:#B45309;line-height:1.5">Công suất đang 75%. Thứ 7–CN tuần này có thể tăng 20–30% (350K → 450K/đêm). Lịch sử cho thấy cuối tuần tháng 6 luôn cao.</div>
+            </div>
+          </div>
+          <div class="ps-row">
+            <button class="btn" style="flex:1;background:var(--amber);color:#fff;font-size:12px;padding:7px" onclick="alert('✅ Đã áp dụng giá mới: 450.000đ/đêm cho Thứ 7–CN!')">Áp dụng giá mới</button>
+            <button class="btn btn-outline" style="font-size:12px;padding:7px" onclick="this.closest('.price-suggest').style.display='none'">Bỏ qua</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Hoạt động gần đây</div></div>
+        <div id="activity-list">
+          <div class="activity-item"><div class="ai-icon" style="background:var(--gl)">📥</div><div><div class="ai-text"><strong>Booking mới</strong> từ Booking.com — Trần Thị B, P.102</div><div class="ai-time">Vừa xong · 1.200.000đ</div></div><span class="badge bg-green" style="margin-left:auto">Mới</span></div>
+          <div class="activity-item"><div class="ai-icon" style="background:#EFF3FF">💬</div><div><div class="ai-text">Zalo gửi <strong>xác nhận check-in</strong> cho Trần Thị B</div><div class="ai-time">5 phút trước · Đã đọc ✓✓</div></div><span class="badge bg-blue" style="margin-left:auto">Zalo</span></div>
+          <div class="activity-item"><div class="ai-icon" style="background:var(--al)">🏃</div><div><div class="ai-text"><strong>Check-out</strong> — P.104, Nguyễn Thị F, 2 đêm</div><div class="ai-time">1 giờ trước · 700.000đ</div></div></div>
+          <div class="activity-item"><div class="ai-icon" style="background:#EFF3FF">💬</div><div><div class="ai-text">Zalo gửi <strong>xin đánh giá</strong> cho Nguyễn Thị F</div><div class="ai-time">1 giờ trước</div></div><span class="badge bg-blue" style="margin-left:auto">Zalo</span></div>
+          <div class="activity-item"><div class="ai-icon" style="background:var(--bg)">🧹</div><div><div class="ai-text">Nhân viên <strong>Minh</strong> bắt đầu dọn P.104</div><div class="ai-time">1 giờ trước</div></div></div>
+          <div class="activity-item"><div class="ai-icon" style="background:var(--gl)">📥</div><div><div class="ai-text"><strong>Booking qua Zalo</strong> — G.Văn G, P.203, 3 đêm</div><div class="ai-time">3 giờ trước · 1.050.000đ</div></div><span class="badge bg-blue" style="margin-left:auto">Zalo</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Đặt phòng hôm nay & ngày mai</div><button class="btn btn-outline" style="font-size:11px;padding:5px 12px" onclick="nav('calendar')">Xem tất cả →</button></div>
+      <table>
+        <thead><tr><th>Khách</th><th>Phòng</th><th>Nhận phòng</th><th>Trả phòng</th><th>Kênh</th><th>Tiền</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <tbody>
+          <tr><td><div class="guest-cell"><div class="guest-av g2">TB</div><div><div class="guest-name">Trần Thị B</div><div class="guest-phone">0901 234 567</div></div></div></td><td>P.102 — Deluxe</td><td>Hôm nay 14:00</td><td>22/06</td><td><span class="badge" style="background:#003580;color:#fff">Booking.com</span></td><td style="font-weight:700">1.200.000đ</td><td><span class="badge bg-blue">Check-in hôm nay</span></td><td><button class="btn btn-green" style="font-size:11px;padding:5px 10px" onclick="openCheckinModal('Trần Thị B','P.102')">Check-in</button></td></tr>
+          <tr><td><div class="guest-cell"><div class="guest-av g1">NA</div><div><div class="guest-name">Nguyễn Văn A</div><div class="guest-phone">0912 345 678</div></div></div></td><td>P.101 — Standard</td><td>20/06</td><td>Ngày mai</td><td><span class="badge bg-green">Trực tiếp</span></td><td style="font-weight:700">700.000đ</td><td><span class="badge bg-green">Đang ở</span></td><td><button class="btn btn-outline" style="font-size:11px;padding:5px 10px" onclick="openCheckoutModal()">Check-out</button></td></tr>
+          <tr><td><div class="guest-cell"><div class="guest-av g4">PK</div><div><div class="guest-name">Phạm Khánh H</div><div class="guest-phone">0934 567 890</div></div></div></td><td>P.103 — Standard</td><td>Ngày mai 15:00</td><td>23/06</td><td><span class="badge" style="background:#CC2229;color:#fff">Agoda</span></td><td style="font-weight:700">800.000đ</td><td><span class="badge" style="background:var(--bg);color:var(--muted)">Sắp đến</span></td><td><button class="btn btn-outline" style="font-size:11px;padding:5px 10px" onclick="alert('Đã gửi nhắc nhở qua Zalo!')">Nhắn Zalo</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     TẠO ĐẶT PHÒNG
+════════════════════════════════════ -->
+<div class="screen" id="screen-booking">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="btn btn-outline" style="font-size:12px;padding:5px 10px" onclick="nav('dashboard')">← Quay lại</button>
+      <div class="pg-title">Tạo đặt phòng mới</div>
+    </div>
+  </div>
+  <div class="booking-content" style="overflow-y:auto;flex:1">
+    <div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">🏠 Chọn phòng</div>
+        <div class="room-picker">
+          <div class="room-opt sel" onclick="selectRoom(this,'P.101','Standard',350000)"><div class="ro-num">P.101</div><div class="ro-type">Standard</div><div class="ro-price">350K/đêm</div></div>
+          <div class="room-opt occ"><div class="ro-num">P.102</div><div class="ro-type">Deluxe</div><div class="ro-occ">Có khách</div></div>
+          <div class="room-opt" onclick="selectRoom(this,'P.103','Standard',350000)"><div class="ro-num">P.103</div><div class="ro-type">Standard</div><div class="ro-price">350K/đêm</div></div>
+          <div class="room-opt occ"><div class="ro-num">P.104</div><div class="ro-type">Standard</div><div class="ro-occ">Đang dọn</div></div>
+          <div class="room-opt" onclick="selectRoom(this,'P.201','Deluxe',500000)"><div class="ro-num">P.201</div><div class="ro-type">Deluxe</div><div class="ro-price">500K/đêm</div></div>
+          <div class="room-opt occ"><div class="ro-num">P.202</div><div class="ro-type">Deluxe</div><div class="ro-occ">Có khách</div></div>
+          <div class="room-opt occ"><div class="ro-num">P.203</div><div class="ro-type">Standard</div><div class="ro-occ">Có khách</div></div>
+          <div class="room-opt" onclick="selectRoom(this,'P.204','Deluxe',500000)"><div class="ro-num">P.204</div><div class="ro-type">Deluxe</div><div class="ro-price">500K/đêm</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">📅 Ngày nhận & trả phòng</div>
+        <div class="date-row">
+          <div><label>Nhận phòng</label><input type="date" id="bk-ci" value="2025-06-21" onchange="calcNights()"></div>
+          <div class="date-sep">→</div>
+          <div><label>Trả phòng</label><input type="date" id="bk-co" value="2025-06-23" onchange="calcNights()"></div>
+        </div>
+        <span class="nights-badge" id="bk-nights">2 đêm</span>
+        <div class="grid2" style="margin-top:14px">
+          <div><label>Giờ nhận phòng</label><select><option>12:00</option><option selected>14:00</option><option>15:00</option><option>16:00</option><option>Linh hoạt</option></select></div>
+          <div><label>Giờ trả phòng</label><select><option>10:00</option><option>11:00</option><option selected>12:00</option><option>Linh hoạt</option></select></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">👤 Thông tin khách</div>
+        <div class="grid2">
+          <div><label>Họ và tên</label><input id="bk-name" placeholder="Nguyễn Văn A"></div>
+          <div><label>Số điện thoại</label><input id="bk-phone" type="tel" placeholder="09x xxx xxxx"></div>
+        </div>
+        <div class="grid2" style="margin-top:12px">
+          <div><label>Email (tùy chọn)</label><input type="email" placeholder="khach@email.com"></div>
+          <div><label>Số khách</label><select><option>1 khách</option><option selected>2 khách</option><option>3 khách</option><option>4 khách</option></select></div>
+        </div>
+        <div style="margin-top:12px"><label>Ghi chú</label><textarea rows="2" placeholder="VD: Khách đến muộn 22:00, cần đưa đón sân bay..."></textarea></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">🔗 Nguồn đặt phòng</div>
+        <div class="source-grid">
+          <div class="source-opt sel" onclick="selectSource(this)">Trực tiếp</div>
+          <div class="source-opt" onclick="selectSource(this)">💬 Zalo</div>
+          <div class="source-opt" onclick="selectSource(this)">📘 Facebook</div>
+          <div class="source-opt" onclick="selectSource(this)" style="background:#003580;color:#fff;border-color:#003580">Booking.com</div>
+          <div class="source-opt" onclick="selectSource(this)" style="background:#CC2229;color:#fff;border-color:#CC2229">Agoda</div>
+          <div class="source-opt" onclick="selectSource(this)" style="background:#FF5A5F;color:#fff;border-color:#FF5A5F">Airbnb</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">🛎️ Dịch vụ bổ sung</div>
+        <div class="service-item" onclick="toggleSvc(this,150000)"><div class="svc-left"><span style="font-size:18px">🚗</span><div><div style="font-size:13px;font-weight:600">Đón sân bay</div><div style="font-size:11px;color:var(--muted)">+150.000đ/lượt</div></div></div><div class="svc-check">✓</div></div>
+        <div class="service-item sel" onclick="toggleSvc(this,50000)"><div class="svc-left"><span style="font-size:18px">🍳</span><div><div style="font-size:13px;font-weight:600">Bữa sáng</div><div style="font-size:11px;color:var(--muted)">+50.000đ/người/ngày</div></div></div><div class="svc-check">✓</div></div>
+        <div class="service-item" onclick="toggleSvc(this,200000)"><div class="svc-left"><span style="font-size:18px">🛵</span><div><div style="font-size:13px;font-weight:600">Thuê xe máy</div><div style="font-size:11px;color:var(--muted)">+200.000đ/ngày</div></div></div><div class="svc-check">✓</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="summary-card">
+        <div class="sum-title">Tóm tắt đặt phòng</div>
+        <div style="background:rgba(255,255,255,.07);border-radius:9px;padding:12px;margin-bottom:14px;display:flex;align-items:center;gap:9px">
+          <span style="font-size:22px">🏠</span>
+          <div><div style="font-size:13px;font-weight:700;color:#fff" id="sum-room">Phòng 101 — Standard</div><div style="font-size:11px;color:rgba(255,255,255,.4)">Sunrise Homestay</div></div>
+        </div>
+        <div class="sum-row"><span class="sum-label">Nhận phòng</span><span class="sum-val" id="sum-ci">21/06/2025</span></div>
+        <div class="sum-row"><span class="sum-label">Trả phòng</span><span class="sum-val" id="sum-co">23/06/2025</span></div>
+        <div class="sum-row"><span class="sum-label">Số đêm</span><span class="sum-val" id="sum-nights">2 đêm</span></div>
+        <div class="sum-div"></div>
+        <div class="sum-row"><span class="sum-label">Tiền phòng</span><span class="sum-val" id="sum-rp">700.000đ</span></div>
+        <div class="sum-row"><span class="sum-label">Dịch vụ</span><span class="sum-val" id="sum-svc">50.000đ</span></div>
+        <div class="sum-div"></div>
+        <div class="sum-total"><span style="font-size:13px;font-weight:600;color:rgba(255,255,255,.6)">Tổng cộng</span><div class="sum-total-price" id="sum-total">750.000đ</div></div>
+        <div style="margin-top:16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Thanh toán</div>
+        <div class="pay-grid">
+          <div class="pay-opt sel" onclick="selectPay(this)"><span style="font-size:16px">💵</span><span class="pay-name">Tiền mặt</span></div>
+          <div class="pay-opt" onclick="selectPay(this)"><span style="font-size:16px">📱</span><span class="pay-name">QR / MoMo</span></div>
+          <div class="pay-opt" onclick="selectPay(this)"><span style="font-size:16px">🏦</span><span class="pay-name">Chuyển khoản</span></div>
+          <div class="pay-opt" onclick="selectPay(this)"><span style="font-size:16px">💳</span><span class="pay-name">Thanh toán sau</span></div>
+        </div>
+        <div class="zalo-prev-box">
+          <div class="zalo-prev-header">💬 Zalo tự động gửi sau khi tạo</div>
+          <div class="zalo-bubble-sm">Xin chào! ✅ Đặt phòng được xác nhận:<br>🏠 <strong id="zalo-rm">P.101</strong> · <strong id="zalo-dt">21/06→23/06</strong><br>💰 Tổng: <strong id="zalo-tt">750.000đ</strong></div>
+        </div>
+        <button class="btn btn-green" style="width:100%;margin-top:14px;padding:12px;font-size:14px;justify-content:center" onclick="submitBooking()">✓ Tạo đặt phòng</button>
+        <button class="btn btn-outline" style="width:100%;margin-top:7px;padding:10px;font-size:12px;justify-content:center;border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.5)" onclick="alert('Đã lưu nháp!')">Lưu nháp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     LỊCH & CHECK-IN
+════════════════════════════════════ -->
+<div class="screen" id="screen-calendar">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="pg-title">Lịch & Check-in</div>
+      <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:7px;overflow:hidden;background:#fff">
+        <button class="btn" style="border-radius:0;background:var(--dark);color:#fff;padding:6px 14px;font-size:12px" id="tab-cal" onclick="calTab('cal')">📅 Lịch phòng</button>
+        <button class="btn btn-outline" style="border-radius:0;border:none;padding:6px 14px;font-size:12px" id="tab-ci" onclick="calTab('ci')">🚪 Check-in / Out</button>
+      </div>
+    </div>
+    <button class="btn btn-green" style="font-size:12px" onclick="nav('booking')">+ Đặt phòng mới</button>
+  </div>
+  <div style="overflow-y:auto;flex:1;display:flex;flex-direction:column">
+    <div id="cal-view">
+      <div class="cal-topbar">
+        <div class="cal-nav">
+          <button class="nav-btn">‹</button>
+          <div class="cal-month">Tháng 6 / 2025</div>
+          <button class="nav-btn">›</button>
+          <button class="btn btn-outline" style="font-size:11px;padding:5px 10px">Hôm nay</button>
+        </div>
+        <div class="cal-legend">
+          <div class="leg-i"><div class="leg-d" style="background:#BFDBFE"></div>Booking.com</div>
+          <div class="leg-i"><div class="leg-d" style="background:#BBF7D0"></div>Trực tiếp/Zalo</div>
+          <div class="leg-i"><div class="leg-d" style="background:#FDE68A"></div>Agoda</div>
+          <div class="leg-i"><div class="leg-d" style="background:#FECACA"></div>Airbnb</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="tg">
+          <div class="tg-head">
+            <div class="tg-rl">Phòng</div>
+            <div class="tg-day"><div class="tg-day-n">15</div><div class="tg-day-l">CN</div></div>
+            <div class="tg-day"><div class="tg-day-n">16</div><div class="tg-day-l">T2</div></div>
+            <div class="tg-day"><div class="tg-day-n">17</div><div class="tg-day-l">T3</div></div>
+            <div class="tg-day"><div class="tg-day-n">18</div><div class="tg-day-l">T4</div></div>
+            <div class="tg-day"><div class="tg-day-n">19</div><div class="tg-day-l">T5</div></div>
+            <div class="tg-day"><div class="tg-day-n">20</div><div class="tg-day-l">T6</div></div>
+            <div class="tg-day today"><div class="tg-day-n">21</div><div class="tg-day-l">T7 ●</div></div>
+            <div class="tg-day"><div class="tg-day-n">22</div><div class="tg-day-l">CN</div></div>
+            <div class="tg-day"><div class="tg-day-n">23</div><div class="tg-day-l">T2</div></div>
+            <div class="tg-day"><div class="tg-day-n">24</div><div class="tg-day-l">T3</div></div>
+            <div class="tg-day"><div class="tg-day-n">25</div><div class="tg-day-l">T4</div></div>
+            <div class="tg-day"><div class="tg-day-n">26</div><div class="tg-day-l">T5</div></div>
+            <div class="tg-day"><div class="tg-day-n">27</div><div class="tg-day-l">T6</div></div>
+            <div class="tg-day"><div class="tg-day-n">28</div><div class="tg-day-l">T7</div></div>
+          </div>
+          <div class="tg-row"><div class="tg-room">P.101<span class="tg-rt">Standard</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-green" style="left:2px;right:-195px" onclick="alert('Nguyễn Văn A · P.101 · 20–22/06 · 700K · Trực tiếp')">Nguyễn Văn A</div></div><div class="tg-cell today-col"></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-blue" style="left:2px;right:-65px" onclick="alert('Phạm Khánh H · 24–25/06 · 350K · Booking.com')">P. Khánh H</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
+          <div class="tg-row"><div class="tg-room">P.102<span class="tg-rt">Deluxe</span></div><div class="tg-cell" style="position:relative"><div class="bb bb-amber" style="left:2px;right:-195px" onclick="alert('Lê Thị C · P.102 · 15–19/06 · Agoda')">Lê Thị C</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col" style="position:relative"><div class="bb bb-blue" style="left:2px;right:-65px" onclick="openCheckinModal('Trần Thị B','P.102')">Trần Thị B ⚡</div></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
+          <div class="tg-row"><div class="tg-room">P.103<span class="tg-rt">Standard</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col"></div><div class="tg-cell" style="position:relative"><div class="bb bb-blue" style="left:2px;right:-65px" onclick="alert('P.Khánh H · 22–23/06 · 350K')">P. Khánh H</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-green" style="left:2px;right:-130px" onclick="alert('Đặng Thị K · 25–27/06 · 700K · Zalo')">Đặng Thị K</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
+          <div class="tg-row"><div class="tg-room">P.104<span class="tg-rt">Standard</span></div><div class="tg-cell" style="position:relative"><div class="bb bb-red" style="left:2px;right:-65px" onclick="alert('Ngô V.L · 15–16/06 · Airbnb')">Ngô V.L</div></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-amber" style="left:2px;right:-65px" onclick="alert('Cao Thị M · 17–18/06 · Agoda')">Cao Thị M</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
+          <div class="tg-row"><div class="tg-room">P.201<span class="tg-rt">Deluxe</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col" style="position:relative"><div class="bb bb-green" style="left:2px;right:-65px" onclick="alert('Lê Minh C · 21–22/06 · 500K · Trực tiếp')">Lê Minh C</div></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-green" style="left:2px;right:-130px" onclick="alert('Trịnh V.N · 26–28/06 · 1.000K')">Trịnh Văn N</div></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
+          <div class="tg-row"><div class="tg-room">P.202<span class="tg-rt">Deluxe</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-amber" style="left:2px;right:-390px" onclick="alert('Phạm Thu D · 19–22/06 · 1.500K · Agoda')">Phạm Thu D · 3 đêm</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col"></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
+          <div class="tg-row"><div class="tg-room">P.203<span class="tg-rt">Standard</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col" style="position:relative"><div class="bb bb-green" style="left:2px;right:-325px" onclick="alert('Hoàng Văn G · 21–24/06 · 1.050K · Zalo')">Hoàng Văn G — Zalo</div></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
+          <div class="tg-row"><div class="tg-room">P.204<span class="tg-rt">Deluxe</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col"></div><div class="tg-cell" style="position:relative"><div class="bb bb-red" style="left:2px;right:-260px" onclick="alert('Vũ Tuấn I · 22–25/06 · 2.400K · Airbnb')">Vũ Tuấn I · 3 đêm</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
+        </div>
+      </div>
+    </div>
+    <div id="ci-view" style="display:none;padding:20px 22px">
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:12px;display:flex;align-items:center;gap:8px">🚪 Check-in hôm nay <span class="badge bg-blue">2 khách</span></div>
+      <div class="ci-queue">
+        <div class="ci-card urgent"><div class="ci-head"><div class="ci-guest"><div class="ci-av" style="background:var(--blue)">TB</div><div><div class="ci-name">Trần Thị B</div><div class="ci-phone">0901 234 567</div></div></div><span class="badge bg-blue">Check-in 14:00</span></div><div class="ci-details"><div class="ci-det"><div class="ci-det-l">Phòng</div><div class="ci-det-v">P.102 — Deluxe</div></div><div class="ci-det"><div class="ci-det-l">Nguồn</div><div class="ci-det-v">Booking.com</div></div><div class="ci-det"><div class="ci-det-l">Số đêm</div><div class="ci-det-v">1 đêm</div></div><div class="ci-det"><div class="ci-det-l">Tổng tiền</div><div class="ci-det-v" style="color:var(--green)">1.200.000đ</div></div></div><div class="ci-actions"><button class="ci-btn blue" onclick="openCheckinModal('Trần Thị B','P.102')">📋 Check-in + Quét CCCD</button><button class="ci-btn ghost" onclick="alert('Gọi 0901 234 567')">📞</button></div></div>
+        <div class="ci-card"><div class="ci-head"><div class="ci-guest"><div class="ci-av" style="background:#7C3AED">PK</div><div><div class="ci-name">Phạm Khánh H</div><div class="ci-phone">0934 567 890</div></div></div><span class="badge bg-blue">Check-in 15:00</span></div><div class="ci-details"><div class="ci-det"><div class="ci-det-l">Phòng</div><div class="ci-det-v">P.103 — Standard</div></div><div class="ci-det"><div class="ci-det-l">Nguồn</div><div class="ci-det-v">Agoda</div></div><div class="ci-det"><div class="ci-det-l">Số đêm</div><div class="ci-det-v">1 đêm</div></div><div class="ci-det"><div class="ci-det-l">Tổng tiền</div><div class="ci-det-v" style="color:var(--green)">800.000đ</div></div></div><div class="ci-actions"><button class="ci-btn blue" onclick="openCheckinModal('Phạm Khánh H','P.103')">📋 Check-in + Quét CCCD</button><button class="ci-btn ghost" onclick="alert('Gọi 0934 567 890')">📞</button></div></div>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:12px;display:flex;align-items:center;gap:8px">🧳 Check-out hôm nay <span class="badge bg-amber">2 khách</span></div>
+      <div class="ci-queue">
+        <div class="ci-card co-card"><div class="ci-head"><div class="ci-guest"><div class="ci-av" style="background:var(--green)">NA</div><div><div class="ci-name">Nguyễn Văn A</div><div class="ci-phone">0912 345 678</div></div></div><span class="badge bg-amber">Trả phòng 12:00</span></div><div class="ci-details"><div class="ci-det"><div class="ci-det-l">Phòng</div><div class="ci-det-v">P.101 — Standard</div></div><div class="ci-det"><div class="ci-det-l">Đã ở</div><div class="ci-det-v">2 đêm</div></div><div class="ci-det"><div class="ci-det-l">Tiền phòng</div><div class="ci-det-v">700.000đ</div></div><div class="ci-det"><div class="ci-det-l">Còn nợ</div><div class="ci-det-v" style="color:var(--green)">0đ ✓</div></div></div><div class="ci-actions"><button class="ci-btn green" onclick="openCheckoutModal()">✓ Check-out & In hóa đơn</button><button class="ci-btn ghost">💬 Nhắn Zalo</button></div></div>
+        <div class="ci-card co-card"><div class="ci-head"><div class="ci-guest"><div class="ci-av" style="background:var(--amber)">PD</div><div><div class="ci-name">Phạm Thu D</div><div class="ci-phone">0923 456 789</div></div></div><span class="badge bg-amber">Trả phòng 12:00</span></div><div class="ci-details"><div class="ci-det"><div class="ci-det-l">Phòng</div><div class="ci-det-v">P.202 — Deluxe</div></div><div class="ci-det"><div class="ci-det-l">Đã ở</div><div class="ci-det-v">3 đêm</div></div><div class="ci-det"><div class="ci-det-l">Tiền phòng</div><div class="ci-det-v">1.500.000đ</div></div><div class="ci-det"><div class="ci-det-l">Còn nợ</div><div class="ci-det-v" style="color:var(--red)">200.000đ</div></div></div><div class="ci-actions"><button class="ci-btn green" onclick="openCheckoutModal()">✓ Check-out & Thu tiền</button><button class="ci-btn ghost">💬 Nhắn Zalo</button></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     ZALO OA
+════════════════════════════════════ -->
+<div class="screen" id="screen-zalo">
+  <div class="topbar"><div class="pg-title">💬 Zalo OA — Tự động hóa & Chatbot</div><div class="topbar-right"><button class="btn btn-outline" style="font-size:12px" onclick="alert('Gửi tin test đến Zalo của bạn!')">🧪 Gửi tin test</button></div></div>
+  <div class="pad" style="overflow-y:auto;flex:1">
+    <div class="zalo-status-bar">
+      <div class="zoa-info"><div class="zoa-av">💬</div><div><div class="zoa-name">Sunrise Homestay Đà Nẵng</div><div class="zoa-id">OA ID: oa.sunrise.danang · 1.247 người theo dõi</div></div></div>
+      <div class="zoa-connected">✓ Đã kết nối</div>
+      <div class="zoa-stats">
+        <div class="zoa-stat"><div class="zoa-stat-num">143</div><div class="zoa-stat-l">Tin tháng này</div></div>
+        <div class="zoa-stat"><div class="zoa-stat-num">97%</div><div class="zoa-stat-l">Tỷ lệ gửi OK</div></div>
+        <div class="zoa-stat"><div class="zoa-stat-num">7</div><div class="zoa-stat-l">Booking qua Zalo</div></div>
+        <div class="zoa-stat"><div class="zoa-stat-num">4.8★</div><div class="zoa-stat-l">Đánh giá TB</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">💬 Tin nhắn tự động</div><button class="btn btn-outline" style="font-size:11px;padding:5px 10px" onclick="alert('Thêm kịch bản tự động mới')">+ Thêm kịch bản</button></div>
+      <div class="grid3">
+        <div class="auto-card enabled" onclick="alert('Chỉnh sửa mẫu: Xác nhận đặt phòng')"><div class="auto-header"><span style="font-size:26px">✅</span><div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></div></div><div class="auto-name">Xác nhận đặt phòng</div><div class="auto-desc">Gửi ngay khi có booking mới từ bất kỳ kênh nào.</div><div style="margin-top:10px;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Đã gửi</div><div style="font-size:11px;font-weight:700;color:var(--green)">87 tin</div></div>
+        <div class="auto-card enabled" onclick="alert('Chỉnh sửa mẫu: Nhắc check-in')"><div class="auto-header"><span style="font-size:26px">⏰</span><div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></div></div><div class="auto-name">Nhắc nhở check-in</div><div class="auto-desc">Gửi địa chỉ, hướng dẫn đến nơi trước 1 ngày.</div><div style="margin-top:10px;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Đã gửi</div><div style="font-size:11px;font-weight:700;color:var(--green)">83 tin</div></div>
+        <div class="auto-card enabled" onclick="alert('Chỉnh sửa mẫu: Cảm ơn')"><div class="auto-header"><span style="font-size:26px">🌟</span><div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></div></div><div class="auto-name">Cảm ơn sau check-out</div><div class="auto-desc">Gửi cảm ơn và xin đánh giá 5 sao sau 2 giờ.</div><div style="margin-top:10px;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Đã gửi</div><div style="font-size:11px;font-weight:700;color:var(--green)">79 tin</div></div>
+        <div class="auto-card enabled" onclick="alert('Chỉnh sửa mẫu: Upsell')"><div class="auto-header"><span style="font-size:26px">🛎️</span><div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></div></div><div class="auto-name">Upsell dịch vụ</div><div class="auto-desc">Gợi ý đưa đón, tour khi khách xác nhận booking.</div><div style="margin-top:10px;font-size:10px;color:var(--amber);font-weight:700">+850K doanh thu thêm</div></div>
+        <div class="auto-card enabled" onclick="alert('Chỉnh sửa mẫu: Hướng dẫn check-in')"><div class="auto-header"><span style="font-size:26px">🔑</span><div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></div></div><div class="auto-name">Hướng dẫn check-in</div><div class="auto-desc">Gửi mã phòng, Wi-Fi, nội quy sau khi nhận phòng.</div><div style="margin-top:10px;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Đã gửi</div><div style="font-size:11px;font-weight:700;color:var(--green)">81 tin</div></div>
+        <div class="auto-card" onclick="alert('Bật kịch bản chúc sinh nhật')"><div class="auto-header"><span style="font-size:26px">🎂</span><div class="toggle off" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></div></div><div class="auto-name">Chúc mừng sinh nhật</div><div class="auto-desc">Gửi voucher giảm giá vào ngày sinh nhật khách.</div><div style="margin-top:10px;font-size:10px;color:var(--muted);font-weight:700">Chưa bật</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">🤖 AI Chatbot tiếng Việt</div><div style="display:flex;align-items:center;gap:9px"><span style="font-size:12px;color:var(--muted)">Chatbot đang</span><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div><span style="font-size:11px;font-weight:700;color:var(--green)">Hoạt động</span></div></div>
+      <div class="grid2">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px">Mô phỏng hội thoại</div>
+          <div class="chat-win" id="zalo-chat">
+            <div class="chat-msg bot">Xin chào! Tôi là trợ lý của <strong>Sunrise Homestay</strong> 🏠 Tôi có thể giúp gì cho bạn?</div>
+            <div class="chat-msg user">Cho mình hỏi còn phòng ngày 25/6 không?</div>
+            <div class="chat-msg bot">Dạ ngày <strong>25/06</strong> còn <strong>3 phòng trống</strong>:<br>• P.103 Standard: <strong>350K/đêm</strong><br>• P.201 Deluxe: <strong>500K/đêm</strong><br>• P.204 Deluxe: <strong>550K/đêm</strong><br>Bạn muốn đặt phòng nào ạ? 😊</div>
+          </div>
+          <div class="chat-row">
+            <input class="chat-input" id="zalo-input" placeholder="Nhập tin nhắn thử chatbot..." onkeypress="if(event.key==='Enter')sendZaloChat()">
+            <button class="chat-send" onclick="sendZaloChat()">Gửi</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px">Cài đặt Chatbot</div>
+          <div class="s-item"><div><div class="s-label">Trả lời hỏi giá & phòng trống</div><div class="s-sub">Real-time theo lịch</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+          <div class="s-item"><div><div class="s-label">Nhận đặt phòng qua Zalo</div><div class="s-sub">Tạo booking tự động</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+          <div class="s-item"><div><div class="s-label">Trả lời 24/7</div><div class="s-sub">Kể cả đêm khuya, ngày lễ</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+          <div class="s-item"><div><div class="s-label">Gợi ý upsell tự động</div><div class="s-sub">Đề xuất tour, xe, đưa đón</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+          <div style="margin-top:12px;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:7px">Ngôn ngữ phản hồi</div>
+          <div style="display:flex;gap:7px">
+            <div style="padding:6px 12px;border:1.5px solid var(--green);border-radius:7px;font-size:11px;font-weight:700;color:var(--green);background:var(--gl);cursor:pointer">🇻🇳 Tiếng Việt</div>
+            <div style="padding:6px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer" onclick="alert('English mode enabled')">🇬🇧 English</div>
+            <div style="padding:6px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer" onclick="alert('Auto-detect enabled')">🤖 Tự nhận dạng</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     CHANNEL MANAGER
+════════════════════════════════════ -->
+<div class="screen" id="screen-channels">
+  <div class="topbar"><div class="pg-title">🔗 Channel Manager — Kênh OTA</div><div class="topbar-right"><button class="btn btn-green" style="font-size:12px" id="sync-btn" onclick="syncAll()">🔄 Đồng bộ tất cả</button><button class="btn btn-outline" style="font-size:12px" onclick="alert('Thêm kênh OTA mới')">+ Thêm kênh</button></div></div>
+  <div class="pad" style="overflow-y:auto;flex:1">
+    <div class="kpi-row">
+      <div class="kpi dark"><div class="kpi-label">Kênh kết nối</div><div class="kpi-val">5</div><div class="kpi-sub" style="color:rgba(255,255,255,.4)">/ 60+ có thể kết nối</div></div>
+      <div class="kpi"><div class="kpi-label">Booking tháng này</div><div class="kpi-val">87</div><div class="kpi-sub up">↑ 23% so tháng 5</div></div>
+      <div class="kpi"><div class="kpi-label">Lần đồng bộ cuối</div><div class="kpi-val">2 phút</div><div class="kpi-sub">Tự động mỗi 5 phút</div></div>
+      <div class="kpi"><div class="kpi-label">Overbooking</div><div class="kpi-val">0</div><div class="kpi-sub up">✓ Không có lỗi</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Kênh đang kết nối</div></div>
+      <div class="grid3">
+        <div class="ch-card connected"><div class="ch-header"><div style="font-size:14px;font-weight:800;color:#003580">booking</div><span class="badge bg-green">✓ Kết nối</span></div><div class="ch-stats"><div class="ch-stat"><div class="ch-stat-n">31</div><div class="ch-stat-l">Bookings</div></div><div class="ch-stat"><div class="ch-stat-n">19.3tr</div><div class="ch-stat-l">Doanh thu</div></div><div class="ch-stat"><div class="ch-stat-n">45%</div><div class="ch-stat-l">Tỷ trọng</div></div></div><div class="ch-footer"><div class="ch-sync">2 phút trước</div><button class="btn btn-outline" style="font-size:11px;padding:4px 9px" onclick="alert('Cài đặt Booking.com: Hoa hồng 15%, Mapping phòng OK')">Cài đặt</button></div></div>
+        <div class="ch-card connected"><div class="ch-header"><div style="font-size:14px;font-weight:800;color:#CC2229">agoda</div><span class="badge bg-green">✓ Kết nối</span></div><div class="ch-stats"><div class="ch-stat"><div class="ch-stat-n">18</div><div class="ch-stat-l">Bookings</div></div><div class="ch-stat"><div class="ch-stat-n">10.7tr</div><div class="ch-stat-l">Doanh thu</div></div><div class="ch-stat"><div class="ch-stat-n">25%</div><div class="ch-stat-l">Tỷ trọng</div></div></div><div class="ch-footer"><div class="ch-sync">2 phút trước</div><button class="btn btn-outline" style="font-size:11px;padding:4px 9px" onclick="alert('Cài đặt Agoda')">Cài đặt</button></div></div>
+        <div class="ch-card error"><div class="ch-header"><div style="font-size:14px;font-weight:800;color:#0064D2">Traveloka</div><span class="badge bg-red">⚠ Lỗi</span></div><div class="ch-stats"><div class="ch-stat"><div class="ch-stat-n">4</div><div class="ch-stat-l">Bookings</div></div><div class="ch-stat"><div class="ch-stat-n">1.7tr</div><div class="ch-stat-l">Doanh thu</div></div><div class="ch-stat"><div class="ch-stat-n">4%</div><div class="ch-stat-l">Tỷ trọng</div></div></div><div class="ch-footer"><div class="ch-sync err">Token hết hạn</div><button class="btn" style="font-size:11px;padding:4px 9px;background:rgba(220,38,38,.08);color:var(--red);border:1px solid rgba(220,38,38,.2)" onclick="alert('Kết nối lại Traveloka: Đăng nhập Traveloka Partner')">Sửa lỗi</button></div></div>
+        <div class="ch-card connected"><div class="ch-header"><div style="font-size:14px;font-weight:800;color:#FF5A5F">Airbnb</div><span class="badge bg-green">✓ Kết nối</span></div><div class="ch-stats"><div class="ch-stat"><div class="ch-stat-n">6</div><div class="ch-stat-l">Bookings</div></div><div class="ch-stat"><div class="ch-stat-n">3.4tr</div><div class="ch-stat-l">Doanh thu</div></div><div class="ch-stat"><div class="ch-stat-n">8%</div><div class="ch-stat-l">Tỷ trọng</div></div></div><div class="ch-footer"><div class="ch-sync">5 phút trước</div><button class="btn btn-outline" style="font-size:11px;padding:4px 9px" onclick="alert('Cài đặt Airbnb')">Cài đặt</button></div></div>
+        <div class="ch-card connected"><div class="ch-header"><div style="font-size:14px;font-weight:800;color:#0068FF">Mytour</div><span class="badge bg-green">✓ Kết nối</span></div><div class="ch-stats"><div class="ch-stat"><div class="ch-stat-n">3</div><div class="ch-stat-l">Bookings</div></div><div class="ch-stat"><div class="ch-stat-n">1.2tr</div><div class="ch-stat-l">Doanh thu</div></div><div class="ch-stat"><div class="ch-stat-n">3%</div><div class="ch-stat-l">Tỷ trọng</div></div></div><div class="ch-footer"><div class="ch-sync">2 phút trước</div><button class="btn btn-outline" style="font-size:11px;padding:4px 9px" onclick="alert('Cài đặt Mytour')">Cài đặt</button></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">+ Kênh có thể kết nối thêm</div><span style="font-size:11px;color:var(--muted)">55+ kênh</span></div>
+      <div class="avail-grid">
+        <div class="avail-card" onclick="alert('Kết nối Expedia')"><div class="avail-name">Expedia</div><div class="avail-sub">Du lịch quốc tế</div><button class="avail-btn">+ Kết nối</button></div>
+        <div class="avail-card" onclick="alert('Kết nối Vntrip')"><div class="avail-name">Vntrip</div><div class="avail-sub">Kênh nội địa VN</div><button class="avail-btn">+ Kết nối</button></div>
+        <div class="avail-card" onclick="alert('Kết nối Trip.com')"><div class="avail-name">Trip.com</div><div class="avail-sub">Khách TQ & quốc tế</div><button class="avail-btn">+ Kết nối</button></div>
+        <div class="avail-card" onclick="alert('Kết nối Hotels.com')"><div class="avail-name">Hotels.com</div><div class="avail-sub">Quốc tế</div><button class="avail-btn">+ Kết nối</button></div>
+        <div class="avail-card" onclick="alert('Nâng cấp Business để dùng Google Hotel Ads')"><div class="avail-name" style="color:var(--blue)">Google Hotel Ads</div><div class="avail-sub">⭐ Business plan</div><button class="avail-btn" style="border-color:var(--blue);color:var(--blue)">Nâng cấp</button></div>
+        <div class="avail-card" onclick="alert('Xem tất cả 55+ kênh')"><div class="avail-name" style="color:var(--muted)">Xem thêm...</div><div class="avail-sub">50 kênh khác</div><button class="avail-btn">Xem tất cả</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">📋 Nhật ký đồng bộ gần đây</div></div>
+      <div class="sync-item"><div class="sync-dot" style="background:var(--green)"></div><div class="sync-time">Vừa xong</div><div style="font-size:12px;color:var(--text)"><strong>Booking.com</strong> → Nhận booking mới: Trần Thị B, P.102. Đã cập nhật lịch.</div></div>
+      <div class="sync-item"><div class="sync-dot" style="background:var(--green)"></div><div class="sync-time">5p trước</div><div style="font-size:12px;color:var(--text)"><strong>Tất cả kênh</strong> → Đồng bộ giá thành công (8 phòng × 5 kênh)</div></div>
+      <div class="sync-item"><div class="sync-dot" style="background:var(--amber)"></div><div class="sync-time">2h trước</div><div style="font-size:12px;color:var(--text)"><strong>Traveloka</strong> → ⚠ Token xác thực hết hạn. Cần kết nối lại.</div></div>
+      <div class="sync-item"><div class="sync-dot" style="background:var(--green)"></div><div class="sync-time">3h trước</div><div style="font-size:12px;color:var(--text)"><strong>Airbnb</strong> → Khóa lịch 21–22/06 P.102 thành công.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     BÁO CÁO
+════════════════════════════════════ -->
+<div class="screen" id="screen-reports">
+  <div class="topbar"><div class="pg-title">📊 Báo cáo & Phân tích</div><div class="topbar-right"><select style="padding:6px 11px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;background:#fff"><option>Tháng 6/2025</option><option>Quý 2/2025</option><option>Năm 2025</option></select><button class="btn btn-green" style="font-size:12px" onclick="alert('Xuất báo cáo Excel!')">↓ Xuất Excel</button></div></div>
+  <div class="pad" style="overflow-y:auto;flex:1">
+    <div class="kpi-row">
+      <div class="kpi dark"><div class="kpi-label">Doanh thu tháng 6</div><div class="kpi-val">42.800.000đ</div><div class="kpi-sub" style="color:var(--gm)">↑ 23% so tháng 5</div></div>
+      <div class="kpi"><div class="kpi-label">Công suất phòng</div><div class="kpi-val">78%</div><div class="kpi-sub up">↑ 8% so tháng 5</div></div>
+      <div class="kpi"><div class="kpi-label">ADR (Giá TB/đêm)</div><div class="kpi-val">430.000đ</div><div class="kpi-sub up">↑ 12% so tháng 5</div></div>
+      <div class="kpi"><div class="kpi-label">Tổng booking</div><div class="kpi-val">87</div><div class="kpi-sub">7 từ Zalo trực tiếp</div></div>
+    </div>
+    <div class="grid3" style="margin-bottom:14px">
+      <div class="insight-card pos"><div style="font-size:20px;margin-bottom:7px">📈</div><div class="ins-title">Cuối tuần bán rất tốt</div><div class="ins-body">Thứ 6–CN đạt 95%+ công suất. Có thể tăng giá thêm 15% cho cuối tuần tháng 7 mà không lo giảm booking.</div></div>
+      <div class="insight-card warn"><div style="font-size:20px;margin-bottom:7px">⚠️</div><div class="ins-title">Thứ 2–3 công suất thấp</div><div class="ins-body">Chỉ đạt 45% giữa tuần. Thử giảm giá 10% hoặc tạo ưu đãi "Gói 2 đêm giữa tuần" để lấp đầy.</div></div>
+      <div class="insight-card info"><div style="font-size:20px;margin-bottom:7px">💡</div><div class="ins-title">Nghỉ lễ 2/9 sắp tới</div><div class="ins-body">Còn 73 ngày. Lịch sử cho thấy nhu cầu tăng 180% dịp 2/9. Nên tăng giá 30% và yêu cầu đặt cọc sớm.</div></div>
+    </div>
+    <div class="grid2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Doanh thu theo ngày — Tháng 6/2025</div></div>
+        <div style="height:200px;position:relative"><canvas id="revChart" role="img" aria-label="Biểu đồ doanh thu theo ngày tháng 6/2025"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Công suất phòng</div></div>
+        <div style="height:200px;position:relative"><canvas id="occChart" role="img" aria-label="Biểu đồ công suất phòng"></canvas></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Doanh thu theo kênh</div></div>
+        <div class="ch-bar-row"><div class="ch-bar-dot" style="background:#003580"></div><div class="ch-bar-name">Booking.com</div><div class="ch-bar-wrap"><div class="ch-bar-fill" style="width:45%;background:#003580"></div></div><div class="ch-bar-bk" style="font-size:11px;color:var(--muted)">31 bookings</div><div class="ch-bar-rev">19.260.000đ</div></div>
+        <div class="ch-bar-row"><div class="ch-bar-dot" style="background:#CC2229"></div><div class="ch-bar-name">Agoda</div><div class="ch-bar-wrap"><div class="ch-bar-fill" style="width:25%;background:#CC2229"></div></div><div class="ch-bar-bk" style="font-size:11px;color:var(--muted)">18 bookings</div><div class="ch-bar-rev">10.700.000đ</div></div>
+        <div class="ch-bar-row"><div class="ch-bar-dot" style="background:var(--green)"></div><div class="ch-bar-name">Trực tiếp & Zalo</div><div class="ch-bar-wrap"><div class="ch-bar-fill" style="width:18%;background:var(--green)"></div></div><div class="ch-bar-bk" style="font-size:11px;color:var(--muted)">14 bookings</div><div class="ch-bar-rev">7.700.000đ</div></div>
+        <div class="ch-bar-row"><div class="ch-bar-dot" style="background:#FF5A5F"></div><div class="ch-bar-name">Airbnb</div><div class="ch-bar-wrap"><div class="ch-bar-fill" style="width:8%;background:#FF5A5F"></div></div><div class="ch-bar-bk" style="font-size:11px;color:var(--muted)">6 bookings</div><div class="ch-bar-rev">3.420.000đ</div></div>
+        <div class="ch-bar-row"><div class="ch-bar-dot" style="background:var(--amber)"></div><div class="ch-bar-name">Traveloka / Mytour</div><div class="ch-bar-wrap"><div class="ch-bar-fill" style="width:4%;background:var(--amber)"></div></div><div class="ch-bar-bk" style="font-size:11px;color:var(--muted)">4 bookings</div><div class="ch-bar-rev">1.720.000đ</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Hiệu suất Zalo OA</div></div>
+        <div class="zs-grid">
+          <div class="zs-box"><div class="zs-num">143</div><div class="zs-label">Tin đã gửi</div><div class="zs-rate">Tháng 6</div></div>
+          <div class="zs-box"><div class="zs-num">97%</div><div class="zs-label">Tỷ lệ gửi OK</div><div class="zs-rate">↑ Tốt</div></div>
+          <div class="zs-box"><div class="zs-num">7</div><div class="zs-label">Booking qua Zalo</div><div class="zs-rate">3.500.000đ</div></div>
+          <div class="zs-box"><div class="zs-num">4.8★</div><div class="zs-label">Đánh giá TB</div><div class="zs-rate">↑ +0.3</div></div>
+        </div>
+        <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
+          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px">Tin tự động đã gửi</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">✅ Xác nhận đặt phòng</span><span style="font-weight:600">87 tin</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">⏰ Nhắc check-in</span><span style="font-weight:600">83 tin</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">⭐ Xin đánh giá</span><span style="font-weight:600">79 tin</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">💬 Chatbot trả lời</span><span style="font-weight:600">34 cuộc</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     KHÁCH HÀNG / NHÂN VIÊN / CÀI ĐẶT
+════════════════════════════════════ -->
+<div class="screen" id="screen-guests">
+  <div class="topbar"><div class="pg-title" id="guests-title">👥 Khách hàng</div><div class="topbar-right"><button class="btn btn-outline" style="font-size:12px" onclick="alert('Xuất Excel')">↓ Excel</button><button class="btn btn-green" style="font-size:12px" id="guests-add-btn" onclick="alert('Thêm mới')">+ Thêm mới</button></div></div>
+  <div class="pad" style="overflow-y:auto;flex:1">
+    <div class="tab-bar" style="max-width:420px">
+      <button class="tab-btn active" onclick="guestTab('guests',this)">👥 Khách hàng</button>
+      <button class="tab-btn" onclick="guestTab('staff',this)">👤 Nhân viên</button>
+      <button class="tab-btn" onclick="guestTab('settings',this)">⚙️ Cài đặt</button>
+    </div>
+    <!-- Guests -->
+    <div id="gt-guests">
+      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
+        <div class="kpi"><div class="kpi-label">Tổng khách</div><div class="kpi-val">247</div><div class="kpi-sub up">↑ 18 khách mới tháng này</div></div>
+        <div class="kpi"><div class="kpi-label">Khách VIP (3+ lần)</div><div class="kpi-val" style="color:var(--amber)">34</div><div class="kpi-sub">TB 4.7 lần/người</div></div>
+        <div class="kpi"><div class="kpi-label">Khách quay lại</div><div class="kpi-val" style="color:var(--green)">68%</div><div class="kpi-sub up">↑ +5% so tháng trước</div></div>
+        <div class="kpi dark"><div class="kpi-label">Doanh thu / khách</div><div class="kpi-val">173.500đ</div><div class="kpi-sub" style="color:rgba(255,255,255,.4)">TB tháng này</div></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;gap:9px;margin-bottom:14px">
+          <input placeholder="🔍  Tìm theo tên, SĐT, CCCD..." style="flex:1">
+          <select style="width:160px"><option>Tất cả khách</option><option>VIP</option><option>Thường xuyên</option><option>Mới</option></select>
+        </div>
+        <table>
+          <thead><tr><th>Khách hàng</th><th>Lần lưu trú</th><th>Tổng chi</th><th>Lần cuối</th><th>Kênh</th><th>Phân loại</th><th>Thao tác</th></tr></thead>
+          <tbody>
+            <tr><td><div class="guest-cell"><div class="guest-av g1">NL</div><div><div class="guest-name">Nguyễn Thị Lan</div><div class="guest-phone">0901 234 567 · Đà Nẵng</div></div></div></td><td style="font-weight:700">7 lần</td><td style="font-weight:700;color:var(--green)">4.900.000đ</td><td style="color:var(--muted);font-size:12px">15/06/2025</td><td><span class="badge bg-green">Trực tiếp</span></td><td><span class="badge bg-amber">⭐ VIP</span></td><td><div style="display:flex;gap:5px"><button class="btn" style="background:var(--bl);color:var(--blue);font-size:11px;padding:4px 8px" onclick="alert('Nhắn Zalo cho Nguyễn Thị Lan')">💬 Zalo</button><button class="btn btn-outline" style="font-size:11px;padding:4px 8px" onclick="alert('7 lần lưu trú · 4.9tr · 5★ đánh giá')">Lịch sử</button></div></td></tr>
+            <tr><td><div class="guest-cell"><div class="guest-av g2">TB</div><div><div class="guest-name">Trần Văn Bình</div><div class="guest-phone">0912 345 678 · Hà Nội</div></div></div></td><td style="font-weight:700">5 lần</td><td style="font-weight:700;color:var(--green)">3.250.000đ</td><td style="color:var(--muted);font-size:12px">18/06/2025</td><td><span class="badge" style="background:#003580;color:#fff">Booking.com</span></td><td><span class="badge bg-amber">⭐ VIP</span></td><td><div style="display:flex;gap:5px"><button class="btn" style="background:var(--bl);color:var(--blue);font-size:11px;padding:4px 8px">💬 Zalo</button><button class="btn btn-outline" style="font-size:11px;padding:4px 8px" onclick="alert('5 lần · 3.25tr · 4.8★')">Lịch sử</button></div></td></tr>
+            <tr><td><div class="guest-cell"><div class="guest-av g3">LC</div><div><div class="guest-name">Lê Thị Cẩm</div><div class="guest-phone">0923 456 789 · TP.HCM</div></div></div></td><td style="font-weight:700">3 lần</td><td style="font-weight:700;color:var(--green)">2.100.000đ</td><td style="color:var(--muted);font-size:12px">10/06/2025</td><td><span class="badge" style="background:#CC2229;color:#fff">Agoda</span></td><td><span class="badge bg-green">✓ Thường xuyên</span></td><td><div style="display:flex;gap:5px"><button class="btn" style="background:var(--bl);color:var(--blue);font-size:11px;padding:4px 8px">💬 Zalo</button><button class="btn btn-outline" style="font-size:11px;padding:4px 8px" onclick="alert('3 lần · 2.1tr · 5★')">Lịch sử</button></div></td></tr>
+            <tr><td><div class="guest-cell"><div class="guest-av g5">HH</div><div><div class="guest-name">Hoàng Thu Hà</div><div class="guest-phone">0945 678 901 · Đà Lạt</div></div></div></td><td style="font-weight:700">1 lần</td><td style="font-weight:700;color:var(--green)">700.000đ</td><td style="color:var(--muted);font-size:12px">21/06/2025</td><td><span class="badge" style="background:#003580;color:#fff">Booking.com</span></td><td><span class="badge" style="background:var(--bg);color:var(--muted)">Mới</span></td><td><div style="display:flex;gap:5px"><button class="btn" style="background:var(--bl);color:var(--blue);font-size:11px;padding:4px 8px">💬 Zalo</button><button class="btn btn-outline" style="font-size:11px;padding:4px 8px" onclick="alert('1 lần · 700K')">Lịch sử</button></div></td></tr>
+          </tbody>
+        </table>
+        <div style="padding:10px 0 0;font-size:11px;color:var(--muted);text-align:center">Hiển thị 4 / 247 khách · <a href="#" style="color:var(--green);font-weight:600">Xem thêm →</a></div>
+      </div>
+    </div>
+    <!-- Staff -->
+    <div id="gt-staff" style="display:none">
+      <div class="grid3" style="margin-bottom:14px">
+        <div class="staff-card"><div class="staff-header"><div class="staff-av g1">NT</div><div><div style="font-size:13px;font-weight:700;color:var(--dark)">Nguyễn Thành</div><span class="badge" style="background:#EDE9FE;color:#5B21B6;margin-top:3px;display:inline-block">Quản lý</span></div></div><div class="staff-stats"><div class="ss-box"><div class="ss-num">8</div><div class="ss-l">Phòng quản lý</div></div><div class="ss-box"><div class="ss-num">247</div><div class="ss-l">Tổng khách</div></div><div class="ss-box"><div class="ss-num">42.8tr</div><div class="ss-l">Doanh thu</div></div></div><div class="staff-footer"><div class="status-on">Đang online</div><button class="btn btn-outline" style="font-size:11px;padding:4px 9px" onclick="alert('Quyền: Toàn bộ hệ thống')">Quyền hạn</button></div></div>
+        <div class="staff-card"><div class="staff-header"><div class="staff-av g2">LA</div><div><div style="font-size:13px;font-weight:700;color:var(--dark)">Lê Thị Anh</div><span class="badge bg-blue" style="margin-top:3px;display:inline-block">Lễ tân</span></div></div><div class="staff-stats"><div class="ss-box"><div class="ss-num">31</div><div class="ss-l">Check-in</div></div><div class="ss-box"><div class="ss-num">29</div><div class="ss-l">Check-out</div></div><div class="ss-box"><div class="ss-num">4.9★</div><div class="ss-l">Đánh giá</div></div></div><div class="staff-footer"><div class="status-on">Đang online</div><button class="btn btn-outline" style="font-size:11px;padding:4px 9px" onclick="alert('Quyền lễ tân: Check-in/out, Xem lịch, Tạo booking')">Quyền hạn</button></div></div>
+        <div class="staff-card"><div class="staff-header"><div class="staff-av" style="background:var(--amber)">TM</div><div><div style="font-size:13px;font-weight:700;color:var(--dark)">Trần Văn Minh</div><span class="badge bg-green" style="margin-top:3px;display:inline-block">Buồng phòng</span></div></div><div class="staff-stats"><div class="ss-box"><div class="ss-num">28</div><div class="ss-l">Phòng đã dọn</div></div><div class="ss-box"><div class="ss-num">22p</div><div class="ss-l">Thời gian TB</div></div><div class="ss-box"><div class="ss-num">100%</div><div class="ss-l">Đúng hạn</div></div></div><div class="staff-footer"><div class="status-off">Offline</div><button class="btn btn-outline" style="font-size:11px;padding:4px 9px" onclick="alert('Quyền buồng phòng: Quản lý dọn phòng, Chụp ảnh')">Quyền hạn</button></div></div>
+      </div>
+      <div class="card" style="border:1.5px dashed var(--border);cursor:pointer;text-align:center;padding:28px" onclick="alert('Mời nhân viên mới qua email hoặc Zalo')">
+        <div style="font-size:28px;margin-bottom:9px">+</div>
+        <div style="font-size:13px;font-weight:700;color:var(--muted)">Mời nhân viên mới</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">Gửi link mời qua Zalo hoặc email</div>
+      </div>
+    </div>
+    <!-- Settings -->
+    <div id="gt-settings" style="display:none">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:18px">🏠 Thông tin cơ sở lưu trú</div>
+        <div class="s-item"><div><div class="s-label">Tên cơ sở</div></div><input class="s-input" value="Sunrise Homestay Đà Nẵng" style="width:240px"></div>
+        <div class="s-item"><div><div class="s-label">Địa chỉ</div></div><input class="s-input" value="123 Võ Nguyên Giáp, Đà Nẵng" style="width:280px"></div>
+        <div class="s-item"><div><div class="s-label">Số điện thoại</div></div><input class="s-input" value="0905 123 456" style="width:160px"></div>
+        <div class="s-item"><div><div class="s-label">Giờ nhận phòng mặc định</div></div><input type="time" class="s-input" value="14:00" style="width:100px"></div>
+        <div class="s-item"><div><div class="s-label">Giờ trả phòng mặc định</div></div><input type="time" class="s-input" value="12:00" style="width:100px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">🔔 Thông báo & Tự động hóa</div>
+        <div class="s-item"><div><div class="s-label">Thông báo booking mới</div><div class="s-sub">Nhận thông báo khi có đặt phòng từ OTA</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+        <div class="s-item"><div><div class="s-label">Cảnh báo overbooking</div><div class="s-sub">Cảnh báo ngay khi phát hiện xung đột lịch</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+        <div class="s-item"><div><div class="s-label">Báo cáo doanh thu hàng ngày</div><div class="s-sub">Gửi tóm tắt qua Zalo lúc 22:00 mỗi tối</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+        <div class="s-item"><div><div class="s-label">Nhắc dọn phòng tự động</div><div class="s-sub">Thông báo nhân viên sau mỗi check-out</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+        <div class="s-item"><div><div class="s-label">Gói hiện tại: Pro</div><div class="s-sub">35.000đ/phòng/tháng · 8 phòng · Hết hạn: 21/09/2025</div></div><button class="btn btn-green" style="font-size:12px" onclick="alert('Nâng cấp Business: AI Chatbot + Google Hotel Ads')">Nâng cấp</button></div>
+        <div style="text-align:right;margin-top:14px"><button class="btn btn-green" onclick="alert('Đã lưu cài đặt!')">Lưu thay đổi</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SETTINGS REDIRECT
+════════════════════════════════════ -->
+<div class="screen" id="screen-settings">
+  <div class="topbar"><div class="pg-title">⚙️ Cài đặt hệ thống</div></div>
+  <div class="pad" style="overflow-y:auto;flex:1">
+    <div style="text-align:center;padding:40px 0">
+      <div style="font-size:48px;margin-bottom:16px">⚙️</div>
+      <div style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:8px">Cài đặt được gộp vào mục Khách hàng</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Để dễ quản lý, cài đặt hệ thống nằm ở tab Cài đặt trong mục Khách hàng.</div>
+      <button class="btn btn-green" onclick="nav('guests');setTimeout(()=>{guestTab('settings',document.querySelector('.tab-btn:last-child'))},100)">Đến Cài đặt →</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- ════════════════════════════════════
+     MODALS
+════════════════════════════════════ -->
+<!-- CHECK-IN MODAL -->
+<div class="modal-overlay" id="modal-checkin" onclick="if(event.target===this)closeModal('modal-checkin')">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">📋 Check-in — <span id="ci-modal-name">Khách</span></div><button class="modal-close" onclick="closeModal('modal-checkin')">×</button></div>
+    <div class="modal-body">
+      <div class="cccd-area" id="cccd-scan" onclick="simulateScan()">
+        <div style="font-size:40px;margin-bottom:10px">🪪</div>
+        <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px">Quét CCCD bằng camera</div>
+        <div style="font-size:12px;color:var(--muted)">Chụp mặt trước CCCD để tự điền thông tin<br>Hoặc <strong style="color:var(--green)">nhấn để mô phỏng quét</strong></div>
+      </div>
+      <div class="cccd-result" id="cccd-result">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:18px">✅</span><div style="font-size:12px;font-weight:700;color:var(--green)">Đọc CCCD thành công — tự điền xong!</div></div>
+        <div class="cccd-fields">
+          <div><div class="cccd-f-l">Họ tên</div><div class="cccd-f-v" id="cccd-name">Trần Thị B</div></div>
+          <div><div class="cccd-f-l">Số CCCD</div><div class="cccd-f-v">079 202 012 345</div></div>
+          <div><div class="cccd-f-l">Ngày sinh</div><div class="cccd-f-v">15/03/1992</div></div>
+          <div><div class="cccd-f-l">Quê quán</div><div class="cccd-f-v">Hà Nội</div></div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:6px">💬 Sau check-in, Zalo tự gửi mã Wi-Fi & hướng dẫn phòng</div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeModal('modal-checkin')">Hủy</button>
+      <button class="modal-btn primary" onclick="completeCheckin()">✓ Hoàn tất check-in</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHECK-OUT MODAL -->
+<div class="modal-overlay" id="modal-checkout" onclick="if(event.target===this)closeModal('modal-checkout')">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🧳 Check-out — Nguyễn Văn A</div><button class="modal-close" onclick="closeModal('modal-checkout')">×</button></div>
+    <div class="modal-body">
+      <div class="checkout-line"><span style="color:var(--muted)">Phòng</span><span style="font-weight:600">P.101 — Standard</span></div>
+      <div class="checkout-line"><span style="color:var(--muted)">Tiền phòng (2 đêm × 350K)</span><span>700.000đ</span></div>
+      <div class="checkout-line"><span style="color:var(--muted)">Bữa sáng (2 × 50K)</span><span>100.000đ</span></div>
+      <div class="checkout-line"><span style="color:var(--muted)">Minibar</span><span>50.000đ</span></div>
+      <div class="checkout-line"><span style="color:var(--muted)">Đã đặt cọc</span><span style="color:var(--green)">-200.000đ</span></div>
+      <div class="checkout-total"><span>Tổng phải thu</span><span style="color:var(--green)">650.000đ</span></div>
+      <div style="background:var(--gl);border-radius:9px;padding:10px;font-size:12px;color:var(--green);text-align:center;margin-top:10px">💬 Zalo tự gửi cảm ơn & xin đánh giá sau 2 giờ</div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeModal('modal-checkout')">Hủy</button>
+      <button class="modal-btn primary" onclick="completeCheckout()">✓ Check-out & In hóa đơn</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════ -->
+<script>
+// ── NAVIGATION ──
+const SCREENS = ['landing','onboarding','dashboard','booking','calendar','zalo','channels','reports','guests','settings']
+const PAGE_TITLES = {landing:'',onboarding:'Thiết lập cơ sở',dashboard:'Tổng quan',booking:'Tạo đặt phòng mới',calendar:'Lịch & Check-in',zalo:'Zalo OA',channels:'Channel Manager',reports:'Báo cáo',guests:'Khách hàng',settings:'Cài đặt'}
+const NAV_MAP = {dashboard:'dashboard',calendar:'calendar',booking:'booking',guests:'guests',channels:'channels',reports:'reports',zalo:'zalo',settings:'settings'}
+
+function nav(screen) {
+  SCREENS.forEach(s => {
+    const el = document.getElementById('screen-'+s)
+    if(el) { el.classList.remove('active'); el.style.display='none' }
+  })
+  const target = document.getElementById('screen-'+screen)
+  if(target) { target.classList.add('active'); target.style.display='flex' }
+  // Update active nav
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'))
+  document.querySelectorAll('.nav-item').forEach(el => {
+    if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(`'${screen}'`)) el.classList.add('active')
+  })
+  // Show/hide sidebar
+  const hasSidebar = !['landing','onboarding'].includes(screen)
+  document.getElementById('sidebar').style.display = hasSidebar ? 'flex' : 'none'
+  document.getElementById('main').style.marginLeft = hasSidebar ? 'var(--sw)' : '0'
+  // Init charts if reports
+  if(screen==='reports') setTimeout(initCharts, 100)
+  window.scrollTo(0,0)
+}
+
+// ── ONBOARDING ──
+let obStep = 1, obZaloConnected = false
+function selectType(el) {
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('sel'))
+  el.classList.add('sel')
+}
+function addRoom() {
+  const list = document.getElementById('ob-room-list')
+  const div = document.createElement('div'); div.className = 'room-row'
+  div.innerHTML = `<input placeholder="Tên phòng"><select><option>Standard</option><option>Deluxe</option><option>Suite</option></select><input placeholder="350,000" style="text-align:right"><button class="btn-del" onclick="removeRoom(this)">×</button>`
+  list.appendChild(div)
+}
+function removeRoom(btn) {
+  const list = document.getElementById('ob-room-list')
+  if(list.children.length > 1) btn.closest('.room-row').remove()
+}
+function obNext(step) {
+  const circles = ['sc1','sc2','sc3','sc4'], lines = ['sl1','sl2','sl3'], labels = ['sl-1','sl-2','sl-3','sl-4']
+  if(step > obStep) {
+    document.getElementById(circles[obStep-1]).classList.remove('active')
+    document.getElementById(circles[obStep-1]).classList.add('done')
+    document.getElementById(circles[obStep-1]).innerHTML = '✓'
+    if(obStep <= 3) document.getElementById(lines[obStep-1]).classList.add('done')
+    document.getElementById(labels[obStep-1]).classList.remove('active')
+    document.getElementById(labels[obStep-1]).classList.add('done')
+  }
+  document.getElementById('ob'+obStep).classList.remove('active')
+  obStep = step
+  const el = document.getElementById('ob'+obStep)
+  if(el) { el.classList.add('active') }
+  document.getElementById(circles[obStep-1]).classList.add('active')
+  document.getElementById(labels[obStep-1]).classList.add('active')
+  if(step===4) {
+    const rooms = document.querySelectorAll('.room-row').length
+    document.getElementById('ob-room-count').textContent = rooms
+    document.getElementById('ob-zalo-count').textContent = obZaloConnected ? '4' : '0'
+  }
+}
+function connectZalo() {
+  const btn = document.querySelector('.btn-zalo')
+  btn.textContent = '⏳ Đang kết nối...'; btn.disabled = true
+  setTimeout(() => {
+    document.getElementById('ob-zalo-box').style.display = 'none'
+    document.getElementById('ob-zalo-done').style.display = 'block'
+    obZaloConnected = true
+  }, 1400)
+}
+
+// ── DASHBOARD BOOKING ──
+let bkRoomPrice = 350000, bkSvcTotal = 50000, bkNights = 2
+function selectRoom(el, name, type, price) {
+  document.querySelectorAll('.room-opt:not(.occ)').forEach(r => r.classList.remove('sel'))
+  el.classList.add('sel')
+  bkRoomPrice = price
+  document.getElementById('sum-room').textContent = name + ' — ' + type
+  document.getElementById('zalo-rm').textContent = name
+  updateBkTotal()
+}
+function calcNights() {
+  const ci = new Date(document.getElementById('bk-ci').value)
+  const co = new Date(document.getElementById('bk-co').value)
+  bkNights = Math.max(1, Math.round((co-ci)/86400000))
+  document.getElementById('bk-nights').textContent = bkNights + ' đêm'
+  document.getElementById('sum-nights').textContent = bkNights + ' đêm'
+  const f = d => ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()
+  document.getElementById('sum-ci').textContent = f(ci)
+  document.getElementById('sum-co').textContent = f(co)
+  document.getElementById('zalo-dt').textContent = f(ci)+'→'+f(co)
+  updateBkTotal()
+}
+function updateBkTotal() {
+  const rp = bkRoomPrice * bkNights, total = rp + bkSvcTotal
+  document.getElementById('sum-rp').textContent = rp.toLocaleString('vi-VN')+'đ'
+  document.getElementById('sum-total').textContent = total.toLocaleString('vi-VN')+'đ'
+  document.getElementById('zalo-tt').textContent = total.toLocaleString('vi-VN')+'đ'
+}
+function toggleSvc(el, price) {
+  el.classList.toggle('sel')
+  bkSvcTotal += el.classList.contains('sel') ? price : -price
+  document.getElementById('sum-svc').textContent = bkSvcTotal.toLocaleString('vi-VN')+'đ'
+  updateBkTotal()
+}
+function selectSource(el) {
+  document.querySelectorAll('.source-opt').forEach(s => { s.classList.remove('sel'); s.style.cssText = '' })
+  el.classList.add('sel')
+  if(!el.style.background) { el.style.background = 'var(--gl)'; el.style.color = 'var(--green)'; el.style.borderColor = 'var(--green)' }
+}
+function selectPay(el) {
+  document.querySelectorAll('.pay-opt').forEach(p => p.classList.remove('sel'))
+  el.classList.add('sel')
+}
+function submitBooking() {
+  const name = document.getElementById('bk-name').value
+  const phone = document.getElementById('bk-phone').value
+  if(!name || !phone) { alert('Vui lòng nhập tên và số điện thoại khách!'); return }
+  alert('✅ Đặt phòng thành công cho '+name+'!\n💬 Đã gửi xác nhận qua Zalo\n🏠 Phòng đã cập nhật trạng thái')
+  nav('dashboard')
+}
+function calcNights() {
+  const ci = new Date(document.getElementById('bk-ci').value)
+  const co = new Date(document.getElementById('bk-co').value)
+  bkNights = Math.max(1, Math.round((co-ci)/86400000))
+  document.getElementById('bk-nights').textContent = bkNights + ' đêm'
+  document.getElementById('sum-nights').textContent = bkNights + ' đêm'
+  const f = d => ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()
+  document.getElementById('sum-ci').textContent = f(ci)
+  document.getElementById('sum-co').textContent = f(co)
+  document.getElementById('zalo-dt').textContent = f(ci)+'→'+f(co)
+  updateBkTotal()
+}
+
+// ── CALENDAR TABS ──
+function calTab(tab) {
+  document.getElementById('cal-view').style.display = tab==='cal' ? 'flex' : 'none'
+  document.getElementById('ci-view').style.display = tab==='ci' ? 'block' : 'none'
+  document.getElementById('tab-cal').style.background = tab==='cal' ? 'var(--dark)' : '#fff'
+  document.getElementById('tab-cal').style.color = tab==='cal' ? '#fff' : 'var(--muted)'
+  document.getElementById('tab-ci').style.background = tab==='ci' ? 'var(--dark)' : '#fff'
+  document.getElementById('tab-ci').style.color = tab==='ci' ? '#fff' : 'var(--muted)'
+}
+
+// ── MODALS ──
+function openCheckinModal(name, room) {
+  document.getElementById('ci-modal-name').textContent = name + ' — ' + room
+  document.getElementById('cccd-name').textContent = name
+  document.getElementById('cccd-scan').style.display = 'block'
+  document.getElementById('cccd-result').style.display = 'none'
+  document.getElementById('modal-checkin').classList.add('open')
+}
+function openCheckoutModal() {
+  document.getElementById('modal-checkout').classList.add('open')
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open')
+}
+function simulateScan() {
+  const area = document.getElementById('cccd-scan')
+  area.innerHTML = '<div style="font-size:32px;margin-bottom:10px">⏳</div><div style="font-size:13px;font-weight:700;color:var(--dark)">Đang đọc CCCD...</div><div style="font-size:12px;color:var(--muted)">Vui lòng giữ nguyên CCCD trước camera</div>'
+  setTimeout(() => {
+    area.style.display = 'none'
+    document.getElementById('cccd-result').style.display = 'block'
+  }, 1200)
+}
+function completeCheckin() {
+  closeModal('modal-checkin')
+  alert('✅ Check-in thành công!\n💬 Đã gửi Zalo hướng dẫn phòng & mã Wi-Fi cho khách.\n🏠 Phòng chuyển sang trạng thái "Có khách".')
+}
+function completeCheckout() {
+  closeModal('modal-checkout')
+  alert('✅ Check-out hoàn tất!\n📄 Đã in hóa đơn.\n💬 Zalo tự gửi cảm ơn & xin đánh giá sau 2 giờ.\n🧹 Đã thông báo nhân viên dọn phòng.')
+}
+
+// ── ZALO CHATBOT ──
+const botR = {
+  'giá':'Giá phòng:\n• Standard: 350.000đ/đêm\n• Deluxe: 500.000đ/đêm\nBạn muốn đặt loại nào? 😊',
+  'phòng':'Hiện còn 3 phòng trống:\n• P.103 Standard 350K\n• P.201 Deluxe 500K\n• P.204 Deluxe 550K\nBạn muốn đặt ngày nào?',
+  'wifi':'📶 Tên mạng: SunriseHS\n🔑 Mật khẩu: sunrise2025',
+  'đặt':'Để đặt phòng bạn cho mình biết:\n1. Ngày nhận phòng\n2. Ngày trả phòng\n3. Số người\nMình check ngay! 🏠',
+  'check':'Giờ nhận phòng từ 14:00, trả trước 12:00 nhé! 😊',
+  'default':'Mình chưa hiểu câu hỏi 😅 Bạn có thể hỏi về giá phòng, phòng trống, hoặc cách đặt phòng nhé!'
+}
+function sendZaloChat() {
+  const input = document.getElementById('zalo-input'), msg = input.value.trim()
+  if(!msg) return
+  const win = document.getElementById('zalo-chat')
+  win.innerHTML += `<div class="chat-msg user">${msg}</div>`
+  input.value = ''
+  setTimeout(() => {
+    let reply = botR.default
+    const low = msg.toLowerCase()
+    for(const [k,v] of Object.entries(botR)) { if(k!=='default' && low.includes(k)) { reply=v; break } }
+    win.innerHTML += `<div class="chat-msg bot">${reply.replace(/\n/g,'<br>')}</div>`
+    win.scrollTop = win.scrollHeight
+  }, 700)
+  win.scrollTop = win.scrollHeight
+}
+
+// ── CHANNEL SYNC ──
+function syncAll() {
+  const btn = document.getElementById('sync-btn')
+  btn.textContent = '⏳ Đang đồng bộ...'; btn.disabled = true
+  setTimeout(() => {
+    btn.textContent = '✓ Xong!'; btn.style.background = 'var(--green)'
+    setTimeout(() => { btn.textContent = '🔄 Đồng bộ tất cả'; btn.disabled = false; btn.style.background = '' }, 2000)
+  }, 2000)
+}
+
+// ── GUEST TABS ──
+function guestTab(tab, el) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+  el.classList.add('active')
+  document.getElementById('gt-guests').style.display = tab==='guests' ? 'block' : 'none'
+  document.getElementById('gt-staff').style.display = tab==='staff' ? 'block' : 'none'
+  document.getElementById('gt-settings').style.display = tab==='settings' ? 'block' : 'none'
+  const titles = {guests:'👥 Khách hàng', staff:'👤 Nhân viên & Phân quyền', settings:'⚙️ Cài đặt hệ thống'}
+  document.getElementById('guests-title').textContent = titles[tab]
+  document.getElementById('guests-add-btn').style.display = tab==='settings' ? 'none' : 'block'
+}
+
+// ── CHARTS ──
+let chartsInited = false
+function initCharts() {
+  if(chartsInited) return; chartsInited = true
+  const days = Array.from({length:21},(_,i)=>(i+1)+'/6')
+  const rev = [850,920,1100,780,650,1450,1800,920,1050,780,1200,1650,1900,850,700,1350,1750,2100,980,850,1400]
+  const c1 = document.getElementById('revChart')
+  if(c1) new Chart(c1,{type:'bar',data:{labels:days,datasets:[{data:rev,backgroundColor:'rgba(26,138,90,.7)',borderRadius:4,barPercentage:.65}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'  '+c.parsed.y+'K'}}},scales:{x:{ticks:{font:{size:9},maxTicksLimit:10},grid:{display:false}},y:{ticks:{font:{size:9},callback:v=>v+'K'},grid:{color:'rgba(0,0,0,.04)'}}}}})
+  const c2 = document.getElementById('occChart')
+  if(c2) new Chart(c2,{type:'doughnut',data:{labels:['Có khách','Trống','Đang dọn'],datasets:[{data:[78,16,6],backgroundColor:['#1A8A5A','#E2EDE6','#E8A020'],borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:10}},tooltip:{callbacks:{label:c=>c.label+': '+c.parsed+'%'}}}}})
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  nav('landing')
+  calcNights()
+})
+</script>
+</body>
+</html>
