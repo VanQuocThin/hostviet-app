@@ -1723,11 +1723,13 @@ function closeSidebar() {
   document.getElementById('sidebar-overlay').classList.remove('open')
 }
 
-// ── RESPONSIVE: ẩn hamburger khi desktop ──
+// ── RESPONSIVE: ẩn hamburger khi desktop + fix margin mobile ──
 function checkViewport() {
   const isMobile = window.innerWidth <= 820
   const hb = document.getElementById('hamburger')
+  const main = document.getElementById('main')
   if (hb) hb.style.display = isMobile ? 'flex' : 'none'
+  if (main) main.style.marginLeft = isMobile ? '0' : ''
   if (!isMobile) closeSidebar()
 }
 window.addEventListener('resize', checkViewport)
