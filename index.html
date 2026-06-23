@@ -21,6 +21,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"HostViet","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"Phần mềm quản lý homestay và khách sạn Việt Nam.","url":"https://hostviet-app.vercel.app","inLanguage":"vi","offers":{"@type":"Offer","price":"0","priceCurrency":"VND"}}</script>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --green:#1A8A5A;--gl:#E8F5EE;--gm:#2ECC85;
@@ -656,14 +657,84 @@ tr:hover td{background:rgba(26,138,90,.02)}
   <div class="s-bottom">
     <div class="s-user">
       <div class="s-av">NT</div>
-      <div><div class="s-name">Nguyễn Thành</div><div class="s-plan">Gói Pro · 30 ngày</div></div>
-      <button class="s-logout" onclick="nav('landing')" title="Đăng xuất">→</button>
+      <div><div class="s-name" id="sidebar-username">Nguyễn Thành</div><div class="s-plan" id="sidebar-email">Gói Pro · 30 ngày</div></div>
+      <button class="s-logout" onclick="handleLogout()" title="Đăng xuất">→</button>
     </div>
   </div>
 </aside>
 
 <!-- MAIN -->
 <div class="main" id="main">
+
+<!-- ════════════════════════════════════
+     LOGIN / REGISTER
+════════════════════════════════════ -->
+<div class="screen" id="screen-auth" style="background:linear-gradient(160deg,#F0FAF5,#FAFCFA);align-items:center;justify-content:center;min-height:100vh">
+  <div style="width:100%;max-width:420px;padding:24px">
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--dark)">Host<span style="color:var(--green)">Viet</span></div>
+      <div style="font-size:13px;color:var(--muted);margin-top:5px">Quản lý homestay & khách sạn thông minh</div>
+    </div>
+
+    <!-- Auth Card -->
+    <div style="background:#fff;border-radius:16px;border:1px solid var(--border);padding:26px;box-shadow:0 4px 24px rgba(26,138,90,.07)">
+      <!-- Tabs -->
+      <div style="display:flex;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:22px">
+        <button id="auth-tab-login" onclick="switchAuthTab('login')"
+          style="flex:1;padding:8px;border-radius:6px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;background:#fff;color:var(--dark);box-shadow:0 1px 3px rgba(0,0,0,.08);transition:all .2s">
+          Đăng nhập
+        </button>
+        <button id="auth-tab-register" onclick="switchAuthTab('register')"
+          style="flex:1;padding:8px;border-radius:6px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:var(--muted);transition:all .2s">
+          Đăng ký
+        </button>
+      </div>
+
+      <!-- Error/Success messages -->
+      <div id="auth-error" style="display:none;background:#FEE2E2;border:1px solid #FECACA;border-radius:8px;padding:10px 13px;font-size:13px;color:var(--red);margin-bottom:14px"></div>
+      <div id="auth-success" style="display:none;background:var(--gl);border:1px solid rgba(26,138,90,.3);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--green);margin-bottom:14px"></div>
+
+      <!-- Form -->
+      <div id="auth-name-field" style="margin-bottom:14px;display:none">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Họ và tên</label>
+        <input id="auth-name" type="text" placeholder="Nguyễn Văn A"
+          style="width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:16px;font-family:inherit;outline:none;transition:border-color .2s;box-sizing:border-box">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Email</label>
+        <input id="auth-email" type="email" placeholder="ten@email.com"
+          style="width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:16px;font-family:inherit;outline:none;transition:border-color .2s;box-sizing:border-box">
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">Mật khẩu</label>
+        <input id="auth-password" type="password" placeholder="••••••••" minlength="6"
+          style="width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:16px;font-family:inherit;outline:none;transition:border-color .2s;box-sizing:border-box">
+      </div>
+      <button id="auth-submit-btn" onclick="handleAuth()"
+        style="width:100%;padding:13px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s">
+        Đăng nhập →
+      </button>
+
+      <!-- Divider -->
+      <div style="display:flex;align-items:center;gap:10px;margin:18px 0">
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+        <span style="font-size:12px;color:var(--muted)">hoặc</span>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
+
+      <!-- Demo mode -->
+      <button onclick="enterDemoMode()"
+        style="width:100%;padding:11px;background:transparent;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .2s">
+        👀 Xem demo (không cần đăng ký)
+      </button>
+    </div>
+
+    <div style="text-align:center;margin-top:18px;font-size:12px;color:var(--muted)">
+      ✓ Miễn phí 30 ngày &nbsp;·&nbsp; ✓ Không cần thẻ tín dụng &nbsp;·&nbsp; ✓ Hỗ trợ qua Zalo
+    </div>
+  </div>
+</div>
 
 <!-- ════════════════════════════════════
      LANDING PAGE
@@ -1474,7 +1545,7 @@ tr:hover td{background:rgba(26,138,90,.02)}
 ════════════════════════════════════ -->
 <script>
 // ── NAVIGATION ──
-const SCREENS = ['landing','onboarding','dashboard','booking','calendar','zalo','channels','reports','guests','settings']
+const SCREENS = ['auth','landing','onboarding','dashboard','booking','calendar','zalo','channels','reports','guests','settings']
 const PAGE_TITLES = {landing:'',onboarding:'Thiết lập cơ sở',dashboard:'Tổng quan',booking:'Tạo đặt phòng mới',calendar:'Lịch & Check-in',zalo:'Zalo OA',channels:'Channel Manager',reports:'Báo cáo',guests:'Khách hàng',settings:'Cài đặt'}
 const NAV_MAP = {dashboard:'dashboard',calendar:'calendar',booking:'booking',guests:'guests',channels:'channels',reports:'reports',zalo:'zalo',settings:'settings'}
 
@@ -1491,7 +1562,7 @@ function nav(screen) {
     if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(`'${screen}'`)) el.classList.add('active')
   })
   // Show/hide sidebar
-  const hasSidebar = !['landing','onboarding'].includes(screen)
+  const hasSidebar = !['auth','landing','onboarding'].includes(screen)
   const sb = document.getElementById('sidebar')
   const hb = document.getElementById('hamburger')
   const isMobile = window.innerWidth <= 820
@@ -1763,11 +1834,175 @@ document.addEventListener('focusout', function(e) {
   if (['INPUT','SELECT','TEXTAREA'].includes(el.tagName)) el.style.fontSize = ''
 })
 
+// ════════════════════════════════════
+// SUPABASE AUTH
+// ════════════════════════════════════
+
+// ⚠️ THAY 2 DÒNG NÀY BẰNG THÔNG TIN SUPABASE CỦA BẠN
+const SUPABASE_URL = 'https://bmmlowipovlraazkhlyk.supabase.co'
+const SUPABASE_ANON_KEY = 'THAY_BANG_PUBLISHABLE_KEY_CUA_BAN'
+
+let supabase = null
+let currentUser = null
+let authTab = 'login'
+
+// Khởi tạo Supabase client
+function initSupabase() {
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    console.log('✅ Supabase connected')
+    return true
+  } catch(e) {
+    console.warn('⚠️ Supabase init failed:', e.message)
+    return false
+  }
+}
+
+// Chuyển tab Login/Register
+function switchAuthTab(tab) {
+  authTab = tab
+  const isLogin = tab === 'login'
+  const loginBtn = document.getElementById('auth-tab-login')
+  const registerBtn = document.getElementById('auth-tab-register')
+  const nameField = document.getElementById('auth-name-field')
+  const submitBtn = document.getElementById('auth-submit-btn')
+
+  loginBtn.style.background = isLogin ? '#fff' : 'transparent'
+  loginBtn.style.color = isLogin ? 'var(--dark)' : 'var(--muted)'
+  loginBtn.style.boxShadow = isLogin ? '0 1px 3px rgba(0,0,0,.08)' : 'none'
+  registerBtn.style.background = !isLogin ? '#fff' : 'transparent'
+  registerBtn.style.color = !isLogin ? 'var(--dark)' : 'var(--muted)'
+  registerBtn.style.boxShadow = !isLogin ? '0 1px 3px rgba(0,0,0,.08)' : 'none'
+
+  nameField.style.display = isLogin ? 'none' : 'block'
+  submitBtn.textContent = isLogin ? 'Đăng nhập →' : 'Tạo tài khoản →'
+
+  // Reset messages
+  document.getElementById('auth-error').style.display = 'none'
+  document.getElementById('auth-success').style.display = 'none'
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error')
+  el.textContent = msg
+  el.style.display = 'block'
+  document.getElementById('auth-success').style.display = 'none'
+}
+function showAuthSuccess(msg) {
+  const el = document.getElementById('auth-success')
+  el.textContent = msg
+  el.style.display = 'block'
+  document.getElementById('auth-error').style.display = 'none'
+}
+
+// Xử lý đăng nhập / đăng ký
+async function handleAuth() {
+  const email = document.getElementById('auth-email').value.trim()
+  const password = document.getElementById('auth-password').value
+  const name = document.getElementById('auth-name').value.trim()
+  const btn = document.getElementById('auth-submit-btn')
+
+  if (!email || !password) { showAuthError('Vui lòng nhập email và mật khẩu!'); return }
+  if (password.length < 6) { showAuthError('Mật khẩu phải có ít nhất 6 ký tự!'); return }
+  if (authTab === 'register' && !name) { showAuthError('Vui lòng nhập họ tên!'); return }
+
+  btn.textContent = '⏳ Đang xử lý...'
+  btn.disabled = true
+
+  try {
+    if (authTab === 'login') {
+      // ĐĂNG NHẬP
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) throw error
+      currentUser = data.user
+      onAuthSuccess(data.user)
+    } else {
+      // ĐĂNG KÝ
+      const { data, error } = await supabase.auth.signUp({
+        email, password,
+        options: { data: { full_name: name } }
+      })
+      if (error) throw error
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        showAuthError('Email này đã được đăng ký. Vui lòng đăng nhập!')
+      } else {
+        showAuthSuccess('✅ Đăng ký thành công! Kiểm tra email để xác nhận tài khoản, sau đó đăng nhập.')
+        switchAuthTab('login')
+      }
+    }
+  } catch(err) {
+    const msgs = {
+      'Invalid login credentials': 'Email hoặc mật khẩu không đúng!',
+      'Email not confirmed': 'Vui lòng xác nhận email trước khi đăng nhập!',
+      'User already registered': 'Email này đã được đăng ký!',
+      'Password should be at least 6 characters': 'Mật khẩu phải có ít nhất 6 ký tự!',
+    }
+    showAuthError(msgs[err.message] || err.message)
+  } finally {
+    btn.textContent = authTab === 'login' ? 'Đăng nhập →' : 'Tạo tài khoản →'
+    btn.disabled = false
+  }
+}
+
+// Sau khi auth thành công
+function onAuthSuccess(user) {
+  currentUser = user
+  console.log('✅ Logged in:', user.email)
+  // Cập nhật tên trong sidebar
+  const nameEl = document.getElementById('sidebar-username')
+  const emailEl = document.getElementById('sidebar-email')
+  if (nameEl && user.user_metadata?.full_name) nameEl.textContent = user.user_metadata.full_name
+  if (emailEl) emailEl.textContent = user.email
+  nav('dashboard')
+}
+
+// Vào demo không cần đăng ký
+function enterDemoMode() {
+  currentUser = { email: 'demo@hostviet.vn', id: 'demo' }
+  nav('dashboard')
+}
+
+// Đăng xuất
+async function handleLogout() {
+  if (supabase && currentUser && currentUser.id !== 'demo') {
+    await supabase.auth.signOut()
+  }
+  currentUser = null
+  nav('auth')
+}
+
+// Kiểm tra session cũ khi load trang
+async function checkSession() {
+  if (!supabase) return
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session && session.user) {
+      currentUser = session.user
+      nav('dashboard')
+      return
+    }
+  } catch(e) {}
+  nav('auth')
+}
+
+// Cho phép Enter để submit form auth
+document.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && document.getElementById('screen-auth').classList.contains('active')) {
+    handleAuth()
+  }
+})
+
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
-  nav('landing')
   calcNights()
   checkViewport()
+  // Khởi tạo Supabase và kiểm tra session
+  const ok = initSupabase()
+  if (ok) {
+    checkSession() // Tự động vào dashboard nếu đã đăng nhập
+  } else {
+    nav('auth') // Vào trang auth nếu Supabase chưa cấu hình
+  }
 })
 </script>
 </body>
