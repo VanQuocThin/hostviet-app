@@ -1780,19 +1780,6 @@ function submitBooking() {
   alert('✅ Đặt phòng thành công cho '+name+'!\n💬 Đã gửi xác nhận qua Zalo\n🏠 Phòng đã cập nhật trạng thái')
   nav('dashboard')
 }
-function calcNights() {
-  const ci = new Date(document.getElementById('bk-ci').value)
-  const co = new Date(document.getElementById('bk-co').value)
-  bkNights = Math.max(1, Math.round((co-ci)/86400000))
-  document.getElementById('bk-nights').textContent = bkNights + ' đêm'
-  document.getElementById('sum-nights').textContent = bkNights + ' đêm'
-  const f = d => ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()
-  document.getElementById('sum-ci').textContent = f(ci)
-  document.getElementById('sum-co').textContent = f(co)
-  document.getElementById('zalo-dt').textContent = f(ci)+'→'+f(co)
-  updateBkTotal()
-}
-
 // ── CALENDAR TABS ──
 function calTab(tab) {
   document.getElementById('cal-view').style.display = tab==='cal' ? 'flex' : 'none'
@@ -2121,12 +2108,14 @@ document.addEventListener('keypress', (e) => {
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
-  calcNights()
-  // Landing mặc định visible từ HTML — chỉ cần ẩn app và auth
+  // Hiện trang trước — tránh trang trắng nếu JS lỗi sau
   document.getElementById('app-wrapper').style.display = 'none'
-  document.getElementById('public-wrapper').style.display = 'block'
   document.getElementById('public-screens').style.display = 'block'
+  document.getElementById('public-wrapper').style.display = 'block'
+  document.getElementById('screen-landing').style.display = 'flex'
   document.getElementById('screen-auth').style.display = 'none'
+  try { calcNights() } catch(e) {}
+  checkViewport()
   // Nếu có session Supabase → tự động vào app
   const ok = initSupabase()
   if (ok) checkSession()
