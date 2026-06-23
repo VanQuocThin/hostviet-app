@@ -96,7 +96,7 @@ button,[onclick]{touch-action:manipulation}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 label{display:block;font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
-input,select,textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:border-color .18s}
+input,select,textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:16px;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:border-color .18s}
 input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,138,90,.08)}
 input::placeholder{color:var(--muted)}
 .btn{padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
@@ -231,7 +231,7 @@ tr:hover td{background:rgba(26,138,90,.02)}
 .type-sub{font-size:10px;color:var(--muted);margin-top:2px}
 .room-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .room-row{display:grid;grid-template-columns:1fr 1fr 96px 32px;gap:8px;align-items:center;background:#fff;border:1.5px solid var(--border);border-radius:9px;padding:9px 12px}
-.room-row input,.room-row select{border:none;padding:3px 0;font-size:13px;background:transparent;box-shadow:none}
+.room-row input,.room-row select{border:none;padding:3px 0;font-size:16px;background:transparent;box-shadow:none}
 .room-row input:focus,.room-row select:focus{border-bottom:1.5px solid var(--green);box-shadow:none}
 .btn-del{width:44px;height:44px;border-radius:7px;border:none;background:rgba(220,38,38,.08);color:var(--red);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
 .btn-del:hover{background:rgba(220,38,38,.15)}
@@ -421,7 +421,7 @@ tr:hover td{background:rgba(26,138,90,.02)}
 .chat-msg.user{background:#0068FF;color:#fff;align-self:flex-end;border-radius:11px 11px 2px 11px}
 .chat-msg.bot{background:#fff;color:var(--text);align-self:flex-start;border-radius:11px 11px 11px 2px;border:1px solid rgba(0,0,0,.06)}
 .chat-row{display:flex;gap:8px;margin-top:10px}
-.chat-input{flex:1;padding:9px 13px;border:1.5px solid var(--border);border-radius:99px;font-size:12px;font-family:inherit;outline:none}
+.chat-input{flex:1;padding:9px 13px;border:1.5px solid var(--border);border-radius:99px;font-size:16px;font-family:inherit;outline:none}
 .chat-input:focus{border-color:#0068FF}
 .chat-send{padding:9px 16px;background:#0068FF;color:#fff;border:none;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer}
 .log-table th{font-size:9px}
@@ -498,7 +498,7 @@ tr:hover td{background:rgba(26,138,90,.02)}
 .s-item:last-child{border-bottom:none}
 .s-label{font-size:13px;font-weight:600;color:var(--text)}
 .s-sub{font-size:11px;color:var(--muted);margin-top:2px}
-.s-input{padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;outline:none;transition:border-color .18s}
+.s-input{padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:16px;font-family:inherit;outline:none;transition:border-color .18s}
 .s-input:focus{border-color:var(--green)}
 
 /* RESPONSIVE */
@@ -1274,7 +1274,7 @@ tr:hover td{background:rgba(26,138,90,.02)}
      BÁO CÁO
 ════════════════════════════════════ -->
 <div class="screen" id="screen-reports">
-  <div class="topbar"><div class="pg-title">📊 Báo cáo & Phân tích</div><div class="topbar-right"><select style="padding:6px 11px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;background:#fff"><option>Tháng 6/2025</option><option>Quý 2/2025</option><option>Năm 2025</option></select><button class="btn btn-green" style="font-size:12px" onclick="alert('Xuất báo cáo Excel!')">↓ Xuất Excel</button></div></div>
+  <div class="topbar"><div class="pg-title">📊 Báo cáo & Phân tích</div><div class="topbar-right"><select style="padding:6px 11px;border:1px solid var(--border);border-radius:7px;font-size:16px;font-family:inherit;background:#fff"><option>Tháng 6/2025</option><option>Quý 2/2025</option><option>Năm 2025</option></select><button class="btn btn-green" style="font-size:12px" onclick="alert('Xuất báo cáo Excel!')">↓ Xuất Excel</button></div></div>
   <div class="pad" style="overflow-y:auto;flex:1">
     <div class="kpi-row">
       <div class="kpi dark"><div class="kpi-label">Doanh thu tháng 6</div><div class="kpi-val">42.800.000đ</div><div class="kpi-sub" style="color:var(--gm)">↑ 23% so tháng 5</div></div>
