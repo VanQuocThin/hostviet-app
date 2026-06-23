@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HostViet — Phần mềm quản lý Homestay & Khách sạn Việt Nam</title>
 <meta name="description" content="HostViet — Phần mềm quản lý homestay, khách sạn hàng đầu Việt Nam. Tích hợp Zalo OA, đồng bộ 60+ kênh OTA, check-in bằng CCCD, gợi ý giá AI. Setup 15 phút, miễn phí đến 3 phòng.">
 <meta name="keywords" content="phần mềm quản lý homestay, quản lý khách sạn, channel manager, zalo OA, booking, phần mềm lưu trú việt nam">
@@ -103,18 +103,18 @@ input::placeholder{color:var(--muted)}
 .toggle::after{content:'';position:absolute;top:2px;width:17px;height:17px;background:#fff;border-radius:50%;transition:transform .2s}
 .toggle.on::after{left:2px;transform:translateX(17px)}.toggle.off::after{left:2px}
 table{width:100%;border-collapse:collapse}
-th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg)}
+th{text-align:left;padding:8px 10px;font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg)}
 td{padding:10px 10px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(26,138,90,.02)}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;width:100%}
 .kpi{background:var(--white);border:1px solid var(--border);border-radius:13px;padding:16px 18px}
 .kpi.dark{background:var(--dark);border-color:var(--dark)}
-.kpi-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.kpi-label{font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
 .kpi.dark .kpi-label{color:rgba(255,255,255,.4)}
 .kpi-val{font-size:22px;font-weight:700;color:var(--dark)}
 .kpi.dark .kpi-val{color:var(--gm)}
-.kpi-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.kpi-sub{font-size:12px;color:var(--text);margin-top:3px}
 .up{color:#16A34A}
 
 /* ── LANDING ── */
@@ -920,7 +920,7 @@ tr:hover td{background:rgba(26,138,90,.02)}
 </aside>
 
 <!-- MAIN -->
-<div class="main" id="main">
+<main class="main" id="main" role="main">
 
 <!-- ════════════════════════════════════
      ONBOARDING
@@ -1554,7 +1554,7 @@ tr:hover td{background:rgba(26,138,90,.02)}
   </div>
 </div>
 
-</div><!-- end .main -->
+</main><!-- end .main -->
 
 <!-- ════════════════════════════════════
      MODALS
