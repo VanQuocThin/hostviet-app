@@ -514,14 +514,6 @@ tr:hover td{background:rgba(26,138,90,.02)}
   .hero h1{font-size:38px}
 }
 
-/* ── Desktop (>820px): show sidebar + margin ── */
-@media(min-width:821px){
-  .main{margin-left:var(--sw)}
-  .sidebar{transform:none!important}
-  #hamburger{display:none!important}
-  #sidebar-overlay{display:none!important}
-}
-
 /* ── RESPONSIVE — Tablet & Mobile (<820px) ── */
 @media(max-width:820px){
   /* Sidebar ẩn, mở bằng hamburger */
@@ -639,6 +631,14 @@ tr:hover td{background:rgba(26,138,90,.02)}
   background:var(--dark);color:#fff;font-size:18px;cursor:pointer;
   align-items:center;justify-content:center}
 @media(max-width:820px){.hamburger{display:flex}}
+/* ── Desktop (>820px): show sidebar + margin ── */
+@media(min-width:821px){
+  .main{margin-left:var(--sw)}
+  .sidebar{transform:none!important}
+  #hamburger{display:none!important}
+  #sidebar-overlay{display:none!important}
+}
+
 
 /* Overlay khi sidebar mở trên mobile */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150}
@@ -896,8 +896,8 @@ tr:hover td{background:rgba(26,138,90,.02)}
 <aside class="sidebar" id="sidebar">
   <div class="s-logo">Host<span>Viet</span></div>
   <div class="s-prop">
-    <div class="s-prop-name">Sunrise Homestay</div>
-    <div class="s-prop-meta">Đà Nẵng · 8 phòng · Gói Pro</div>
+    <div class="s-prop-name" id="s-prop-name">Homestay của bạn</div>
+    <div class="s-prop-meta" id="s-prop-meta">Gói Pro</div>
   </div>
   <div class="s-section">Vận hành</div>
   <div class="nav-item active" onclick="nav('dashboard')"><span class="nav-icon">🏠</span>Tổng quan</div>
@@ -1057,16 +1057,16 @@ tr:hover td{background:rgba(26,138,90,.02)}
   <div class="topbar">
     <div class="pg-title">🏠 Tổng quan hôm nay</div>
     <div class="topbar-right">
-      <span style="font-size:11px;color:var(--muted);background:var(--bg);padding:4px 10px;border-radius:6px;border:1px solid var(--border)">Thứ 7, 21/06/2025</span>
+      <span id="today-badge" style="font-size:11px;color:var(--muted);background:var(--bg);padding:4px 10px;border-radius:6px;border:1px solid var(--border)"></span>
       <button class="btn btn-green" onclick="openCheckinModal('Khách mới','Phòng mới')">+ Check-in nhanh</button>
     </div>
   </div>
   <div class="pad" style="overflow-y:auto;flex:1">
     <div class="kpi-row">
-      <div class="kpi dark"><div class="kpi-label">Doanh thu hôm nay</div><div class="kpi-val">4.200.000đ</div><div class="kpi-sub" style="color:var(--gm)">↑ 18% so hôm qua</div></div>
-      <div class="kpi"><div class="kpi-label">Công suất phòng</div><div class="kpi-val">75%</div><div class="kpi-sub">6/8 phòng có khách</div></div>
-      <div class="kpi"><div class="kpi-label">Booking tháng này</div><div class="kpi-val">23</div><div class="kpi-sub up">↑ 3 so tháng trước</div></div>
-      <div class="kpi"><div class="kpi-label">Zalo đã gửi</div><div class="kpi-val">47</div><div class="kpi-sub" style="color:var(--blue)">💬 Tuần này</div></div>
+      <div class="kpi dark"><div class="kpi-label">Doanh thu hôm nay</div><div class="kpi-val" id="kpi-rev-today">0đ</div><div class="kpi-sub" style="color:var(--gm)">Từ khách đang ở</div></div>
+      <div class="kpi"><div class="kpi-label">Công suất phòng</div><div class="kpi-val" id="kpi-occ">0%</div><div class="kpi-sub" id="kpi-occ-sub">0/0 phòng có khách</div></div>
+      <div class="kpi"><div class="kpi-label">Booking tháng này</div><div class="kpi-val" id="kpi-bk-month">0</div><div class="kpi-sub up" id="kpi-bk-sub">Tháng này</div></div>
+      <div class="kpi"><div class="kpi-label">Zalo đã gửi</div><div class="kpi-val">—</div><div class="kpi-sub" style="color:var(--blue)">💬 Kết nối Zalo OA</div></div>
     </div>
     <div class="dash-main-grid">
       <div class="card">
@@ -1080,16 +1080,7 @@ tr:hover td{background:rgba(26,138,90,.02)}
           <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:8px;height:8px;border-radius:2px;background:var(--amber)"></div>Đang dọn</div>
           <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:8px;height:8px;border-radius:2px;background:var(--blue)"></div>Check-in hôm nay</div>
         </div>
-        <div class="room-grid">
-          <div class="room-card occupied" onclick="alert('P.101 — Nguyễn Văn A\nCheck-in: 20/06 | Check-out: 22/06\n700.000đ · Đã thanh toán ✓')"><div class="rc-num">P.101</div><div class="rc-status">Có khách</div><div class="rc-guest">Nguyễn Văn A</div><span class="rc-badge bg-green">Đêm 2/3</span></div>
-          <div class="room-card checkin" onclick="openCheckinModal('Trần Thị B','P.102')"><div class="rc-num">P.102</div><div class="rc-status">Check-in hôm nay</div><div class="rc-guest">Trần Thị B</div><span class="rc-badge bg-blue">14:00</span></div>
-          <div class="room-card available" onclick="nav('booking')"><div class="rc-num">P.103</div><div class="rc-status">Trống</div><div class="rc-guest">Nhấn để đặt</div></div>
-          <div class="room-card cleaning" onclick="alert('P.104 đang dọn phòng\nNhân viên: Minh\nDự kiến xong: 11:00')"><div class="rc-num">P.104</div><div class="rc-status">Đang dọn</div><div class="rc-guest">Dự kiến xong 11:00</div><span class="rc-badge bg-amber">~30p</span></div>
-          <div class="room-card occupied" onclick="alert('P.201 — Lê Minh C\n500.000đ · Đã TT')"><div class="rc-num">P.201</div><div class="rc-status">Có khách</div><div class="rc-guest">Lê Minh C</div></div>
-          <div class="room-card occupied" onclick="alert('P.202 — Phạm Thu D\n3 đêm · 1.500.000đ')"><div class="rc-num">P.202</div><div class="rc-status">Có khách</div><div class="rc-guest">Phạm Thu D</div><span class="rc-badge bg-green">Đêm 3/3</span></div>
-          <div class="room-card occupied" onclick="openCheckoutModal()"><div class="rc-num">P.203</div><div class="rc-status">Có khách</div><div class="rc-guest">Hoàng Văn E</div></div>
-          <div class="room-card available" onclick="nav('booking')"><div class="rc-num">P.204</div><div class="rc-status">Trống</div><div class="rc-guest">Booking ngày mai</div></div>
-        </div>
+        <div class="room-grid" id="room-grid"></div>
         <div class="price-suggest">
           <div style="display:flex;gap:9px;align-items:flex-start">
             <span style="font-size:20px">💡</span>
@@ -1106,25 +1097,14 @@ tr:hover td{background:rgba(26,138,90,.02)}
       </div>
       <div class="card">
         <div class="card-header"><div class="card-title">Hoạt động gần đây</div></div>
-        <div id="activity-list">
-          <div class="activity-item"><div class="ai-icon" style="background:var(--gl)">📥</div><div><div class="ai-text"><strong>Booking mới</strong> từ Booking.com — Trần Thị B, P.102</div><div class="ai-time">Vừa xong · 1.200.000đ</div></div><span class="badge bg-green" style="margin-left:auto">Mới</span></div>
-          <div class="activity-item"><div class="ai-icon" style="background:#EFF3FF">💬</div><div><div class="ai-text">Zalo gửi <strong>xác nhận check-in</strong> cho Trần Thị B</div><div class="ai-time">5 phút trước · Đã đọc ✓✓</div></div><span class="badge bg-blue" style="margin-left:auto">Zalo</span></div>
-          <div class="activity-item"><div class="ai-icon" style="background:var(--al)">🏃</div><div><div class="ai-text"><strong>Check-out</strong> — P.104, Nguyễn Thị F, 2 đêm</div><div class="ai-time">1 giờ trước · 700.000đ</div></div></div>
-          <div class="activity-item"><div class="ai-icon" style="background:#EFF3FF">💬</div><div><div class="ai-text">Zalo gửi <strong>xin đánh giá</strong> cho Nguyễn Thị F</div><div class="ai-time">1 giờ trước</div></div><span class="badge bg-blue" style="margin-left:auto">Zalo</span></div>
-          <div class="activity-item"><div class="ai-icon" style="background:var(--bg)">🧹</div><div><div class="ai-text">Nhân viên <strong>Minh</strong> bắt đầu dọn P.104</div><div class="ai-time">1 giờ trước</div></div></div>
-          <div class="activity-item"><div class="ai-icon" style="background:var(--gl)">📥</div><div><div class="ai-text"><strong>Booking qua Zalo</strong> — G.Văn G, P.203, 3 đêm</div><div class="ai-time">3 giờ trước · 1.050.000đ</div></div><span class="badge bg-blue" style="margin-left:auto">Zalo</span></div>
-        </div>
+        <div id="activity-list"></div>
       </div>
     </div>
     <div class="card">
       <div class="card-header"><div class="card-title">Đặt phòng hôm nay & ngày mai</div><button class="btn btn-outline" style="font-size:11px;padding:5px 12px" onclick="nav('calendar')">Xem tất cả →</button></div>
       <table>
         <thead><tr><th>Khách</th><th>Phòng</th><th>Nhận phòng</th><th>Trả phòng</th><th>Kênh</th><th>Tiền</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
-        <tbody>
-          <tr><td><div class="guest-cell"><div class="guest-av g2">TB</div><div><div class="guest-name">Trần Thị B</div><div class="guest-phone">0901 234 567</div></div></div></td><td>P.102 — Deluxe</td><td>Hôm nay 14:00</td><td>22/06</td><td><span class="badge" style="background:#003580;color:#fff">Booking.com</span></td><td style="font-weight:700">1.200.000đ</td><td><span class="badge bg-blue">Check-in hôm nay</span></td><td><button class="btn btn-green" style="font-size:11px;padding:5px 10px" onclick="openCheckinModal('Trần Thị B','P.102')">Check-in</button></td></tr>
-          <tr><td><div class="guest-cell"><div class="guest-av g1">NA</div><div><div class="guest-name">Nguyễn Văn A</div><div class="guest-phone">0912 345 678</div></div></div></td><td>P.101 — Standard</td><td>20/06</td><td>Ngày mai</td><td><span class="badge bg-green">Trực tiếp</span></td><td style="font-weight:700">700.000đ</td><td><span class="badge bg-green">Đang ở</span></td><td><button class="btn btn-outline" style="font-size:11px;padding:5px 10px" onclick="openCheckoutModal()">Check-out</button></td></tr>
-          <tr><td><div class="guest-cell"><div class="guest-av g4">PK</div><div><div class="guest-name">Phạm Khánh H</div><div class="guest-phone">0934 567 890</div></div></div></td><td>P.103 — Standard</td><td>Ngày mai 15:00</td><td>23/06</td><td><span class="badge" style="background:#CC2229;color:#fff">Agoda</span></td><td style="font-weight:700">800.000đ</td><td><span class="badge" style="background:var(--bg);color:var(--muted)">Sắp đến</span></td><td><button class="btn btn-outline" style="font-size:11px;padding:5px 10px" onclick="alert('Đã gửi nhắc nhở qua Zalo!')">Nhắn Zalo</button></td></tr>
-        </tbody>
+        <tbody id="booking-tbody"></tbody>
       </table>
     </div>
   </div>
@@ -1144,16 +1124,7 @@ tr:hover td{background:rgba(26,138,90,.02)}
     <div>
       <div class="card">
         <div class="card-title" style="margin-bottom:14px">🏠 Chọn phòng</div>
-        <div class="room-picker">
-          <div class="room-opt sel" onclick="selectRoom(this,'P.101','Standard',350000)"><div class="ro-num">P.101</div><div class="ro-type">Standard</div><div class="ro-price">350K/đêm</div></div>
-          <div class="room-opt occ"><div class="ro-num">P.102</div><div class="ro-type">Deluxe</div><div class="ro-occ">Có khách</div></div>
-          <div class="room-opt" onclick="selectRoom(this,'P.103','Standard',350000)"><div class="ro-num">P.103</div><div class="ro-type">Standard</div><div class="ro-price">350K/đêm</div></div>
-          <div class="room-opt occ"><div class="ro-num">P.104</div><div class="ro-type">Standard</div><div class="ro-occ">Đang dọn</div></div>
-          <div class="room-opt" onclick="selectRoom(this,'P.201','Deluxe',500000)"><div class="ro-num">P.201</div><div class="ro-type">Deluxe</div><div class="ro-price">500K/đêm</div></div>
-          <div class="room-opt occ"><div class="ro-num">P.202</div><div class="ro-type">Deluxe</div><div class="ro-occ">Có khách</div></div>
-          <div class="room-opt occ"><div class="ro-num">P.203</div><div class="ro-type">Standard</div><div class="ro-occ">Có khách</div></div>
-          <div class="room-opt" onclick="selectRoom(this,'P.204','Deluxe',500000)"><div class="ro-num">P.204</div><div class="ro-type">Deluxe</div><div class="ro-price">500K/đêm</div></div>
-        </div>
+        <div class="room-picker" id="room-picker"></div>
       </div>
       <div class="card">
         <div class="card-title" style="margin-bottom:14px">📅 Ngày nhận & trả phòng</div>
@@ -1263,45 +1234,16 @@ tr:hover td{background:rgba(26,138,90,.02)}
       </div>
       <div class="timeline">
         <div class="tg">
-          <div class="tg-head">
-            <div class="tg-rl">Phòng</div>
-            <div class="tg-day"><div class="tg-day-n">15</div><div class="tg-day-l">CN</div></div>
-            <div class="tg-day"><div class="tg-day-n">16</div><div class="tg-day-l">T2</div></div>
-            <div class="tg-day"><div class="tg-day-n">17</div><div class="tg-day-l">T3</div></div>
-            <div class="tg-day"><div class="tg-day-n">18</div><div class="tg-day-l">T4</div></div>
-            <div class="tg-day"><div class="tg-day-n">19</div><div class="tg-day-l">T5</div></div>
-            <div class="tg-day"><div class="tg-day-n">20</div><div class="tg-day-l">T6</div></div>
-            <div class="tg-day today"><div class="tg-day-n">21</div><div class="tg-day-l">T7 ●</div></div>
-            <div class="tg-day"><div class="tg-day-n">22</div><div class="tg-day-l">CN</div></div>
-            <div class="tg-day"><div class="tg-day-n">23</div><div class="tg-day-l">T2</div></div>
-            <div class="tg-day"><div class="tg-day-n">24</div><div class="tg-day-l">T3</div></div>
-            <div class="tg-day"><div class="tg-day-n">25</div><div class="tg-day-l">T4</div></div>
-            <div class="tg-day"><div class="tg-day-n">26</div><div class="tg-day-l">T5</div></div>
-            <div class="tg-day"><div class="tg-day-n">27</div><div class="tg-day-l">T6</div></div>
-            <div class="tg-day"><div class="tg-day-n">28</div><div class="tg-day-l">T7</div></div>
-          </div>
-          <div class="tg-row"><div class="tg-room">P.101<span class="tg-rt">Standard</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-green" style="left:2px;right:-195px" onclick="alert('Nguyễn Văn A · P.101 · 20–22/06 · 700K · Trực tiếp')">Nguyễn Văn A</div></div><div class="tg-cell today-col"></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-blue" style="left:2px;right:-65px" onclick="alert('Phạm Khánh H · 24–25/06 · 350K · Booking.com')">P. Khánh H</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
-          <div class="tg-row"><div class="tg-room">P.102<span class="tg-rt">Deluxe</span></div><div class="tg-cell" style="position:relative"><div class="bb bb-amber" style="left:2px;right:-195px" onclick="alert('Lê Thị C · P.102 · 15–19/06 · Agoda')">Lê Thị C</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col" style="position:relative"><div class="bb bb-blue" style="left:2px;right:-65px" onclick="openCheckinModal('Trần Thị B','P.102')">Trần Thị B ⚡</div></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
-          <div class="tg-row"><div class="tg-room">P.103<span class="tg-rt">Standard</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col"></div><div class="tg-cell" style="position:relative"><div class="bb bb-blue" style="left:2px;right:-65px" onclick="alert('P.Khánh H · 22–23/06 · 350K')">P. Khánh H</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-green" style="left:2px;right:-130px" onclick="alert('Đặng Thị K · 25–27/06 · 700K · Zalo')">Đặng Thị K</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
-          <div class="tg-row"><div class="tg-room">P.104<span class="tg-rt">Standard</span></div><div class="tg-cell" style="position:relative"><div class="bb bb-red" style="left:2px;right:-65px" onclick="alert('Ngô V.L · 15–16/06 · Airbnb')">Ngô V.L</div></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-amber" style="left:2px;right:-65px" onclick="alert('Cao Thị M · 17–18/06 · Agoda')">Cao Thị M</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
-          <div class="tg-row"><div class="tg-room">P.201<span class="tg-rt">Deluxe</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col" style="position:relative"><div class="bb bb-green" style="left:2px;right:-65px" onclick="alert('Lê Minh C · 21–22/06 · 500K · Trực tiếp')">Lê Minh C</div></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-green" style="left:2px;right:-130px" onclick="alert('Trịnh V.N · 26–28/06 · 1.000K')">Trịnh Văn N</div></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
-          <div class="tg-row"><div class="tg-room">P.202<span class="tg-rt">Deluxe</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell" style="position:relative"><div class="bb bb-amber" style="left:2px;right:-390px" onclick="alert('Phạm Thu D · 19–22/06 · 1.500K · Agoda')">Phạm Thu D · 3 đêm</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col"></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
-          <div class="tg-row"><div class="tg-room">P.203<span class="tg-rt">Standard</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col" style="position:relative"><div class="bb bb-green" style="left:2px;right:-325px" onclick="alert('Hoàng Văn G · 21–24/06 · 1.050K · Zalo')">Hoàng Văn G — Zalo</div></div><div class="tg-cell today-col"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
-          <div class="tg-row"><div class="tg-room">P.204<span class="tg-rt">Deluxe</span></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell today-col"></div><div class="tg-cell" style="position:relative"><div class="bb bb-red" style="left:2px;right:-260px" onclick="alert('Vũ Tuấn I · 22–25/06 · 2.400K · Airbnb')">Vũ Tuấn I · 3 đêm</div></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div><div class="tg-cell"></div></div>
+          <div class="tg-head" id="cal-head"><div class="tg-rl">Phòng</div></div>
+          <div id="cal-body"></div>
         </div>
       </div>
     </div>
     <div id="ci-view" style="display:none;padding:20px 22px">
-      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:12px;display:flex;align-items:center;gap:8px">🚪 Check-in hôm nay <span class="badge bg-blue">2 khách</span></div>
-      <div class="ci-queue">
-        <div class="ci-card urgent"><div class="ci-head"><div class="ci-guest"><div class="ci-av" style="background:var(--blue)">TB</div><div><div class="ci-name">Trần Thị B</div><div class="ci-phone">0901 234 567</div></div></div><span class="badge bg-blue">Check-in 14:00</span></div><div class="ci-details"><div class="ci-det"><div class="ci-det-l">Phòng</div><div class="ci-det-v">P.102 — Deluxe</div></div><div class="ci-det"><div class="ci-det-l">Nguồn</div><div class="ci-det-v">Booking.com</div></div><div class="ci-det"><div class="ci-det-l">Số đêm</div><div class="ci-det-v">1 đêm</div></div><div class="ci-det"><div class="ci-det-l">Tổng tiền</div><div class="ci-det-v" style="color:var(--green)">1.200.000đ</div></div></div><div class="ci-actions"><button class="ci-btn blue" onclick="openCheckinModal('Trần Thị B','P.102')">📋 Check-in + Quét CCCD</button><button class="ci-btn ghost" onclick="alert('Gọi 0901 234 567')">📞</button></div></div>
-        <div class="ci-card"><div class="ci-head"><div class="ci-guest"><div class="ci-av" style="background:#7C3AED">PK</div><div><div class="ci-name">Phạm Khánh H</div><div class="ci-phone">0934 567 890</div></div></div><span class="badge bg-blue">Check-in 15:00</span></div><div class="ci-details"><div class="ci-det"><div class="ci-det-l">Phòng</div><div class="ci-det-v">P.103 — Standard</div></div><div class="ci-det"><div class="ci-det-l">Nguồn</div><div class="ci-det-v">Agoda</div></div><div class="ci-det"><div class="ci-det-l">Số đêm</div><div class="ci-det-v">1 đêm</div></div><div class="ci-det"><div class="ci-det-l">Tổng tiền</div><div class="ci-det-v" style="color:var(--green)">800.000đ</div></div></div><div class="ci-actions"><button class="ci-btn blue" onclick="openCheckinModal('Phạm Khánh H','P.103')">📋 Check-in + Quét CCCD</button><button class="ci-btn ghost" onclick="alert('Gọi 0934 567 890')">📞</button></div></div>
-      </div>
-      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:12px;display:flex;align-items:center;gap:8px">🧳 Check-out hôm nay <span class="badge bg-amber">2 khách</span></div>
-      <div class="ci-queue">
-        <div class="ci-card co-card"><div class="ci-head"><div class="ci-guest"><div class="ci-av" style="background:var(--green)">NA</div><div><div class="ci-name">Nguyễn Văn A</div><div class="ci-phone">0912 345 678</div></div></div><span class="badge bg-amber">Trả phòng 12:00</span></div><div class="ci-details"><div class="ci-det"><div class="ci-det-l">Phòng</div><div class="ci-det-v">P.101 — Standard</div></div><div class="ci-det"><div class="ci-det-l">Đã ở</div><div class="ci-det-v">2 đêm</div></div><div class="ci-det"><div class="ci-det-l">Tiền phòng</div><div class="ci-det-v">700.000đ</div></div><div class="ci-det"><div class="ci-det-l">Còn nợ</div><div class="ci-det-v" style="color:var(--green)">0đ ✓</div></div></div><div class="ci-actions"><button class="ci-btn green" onclick="openCheckoutModal()">✓ Check-out & In hóa đơn</button><button class="ci-btn ghost">💬 Nhắn Zalo</button></div></div>
-        <div class="ci-card co-card"><div class="ci-head"><div class="ci-guest"><div class="ci-av" style="background:var(--amber)">PD</div><div><div class="ci-name">Phạm Thu D</div><div class="ci-phone">0923 456 789</div></div></div><span class="badge bg-amber">Trả phòng 12:00</span></div><div class="ci-details"><div class="ci-det"><div class="ci-det-l">Phòng</div><div class="ci-det-v">P.202 — Deluxe</div></div><div class="ci-det"><div class="ci-det-l">Đã ở</div><div class="ci-det-v">3 đêm</div></div><div class="ci-det"><div class="ci-det-l">Tiền phòng</div><div class="ci-det-v">1.500.000đ</div></div><div class="ci-det"><div class="ci-det-l">Còn nợ</div><div class="ci-det-v" style="color:var(--red)">200.000đ</div></div></div><div class="ci-actions"><button class="ci-btn green" onclick="openCheckoutModal()">✓ Check-out & Thu tiền</button><button class="ci-btn ghost">💬 Nhắn Zalo</button></div></div>
-      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:12px;display:flex;align-items:center;gap:8px">🚪 Check-in hôm nay <span class="badge bg-blue" id="ci-count">0 khách</span></div>
+      <div class="ci-queue" id="ci-queue"></div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin:16px 0 12px;display:flex;align-items:center;gap:8px">🧳 Check-out hôm nay <span class="badge bg-amber" id="co-count">0 khách</span></div>
+      <div class="ci-queue" id="co-queue"></div>
     </div>
   </div>
 </div>
@@ -1481,10 +1423,10 @@ tr:hover td{background:rgba(26,138,90,.02)}
     <!-- Guests -->
     <div id="gt-guests">
       <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
-        <div class="kpi"><div class="kpi-label">Tổng khách</div><div class="kpi-val">247</div><div class="kpi-sub up">↑ 18 khách mới tháng này</div></div>
-        <div class="kpi"><div class="kpi-label">Khách VIP (3+ lần)</div><div class="kpi-val" style="color:var(--amber)">34</div><div class="kpi-sub">TB 4.7 lần/người</div></div>
-        <div class="kpi"><div class="kpi-label">Khách quay lại</div><div class="kpi-val" style="color:var(--green)">68%</div><div class="kpi-sub up">↑ +5% so tháng trước</div></div>
-        <div class="kpi dark"><div class="kpi-label">Doanh thu / khách</div><div class="kpi-val">173.500đ</div><div class="kpi-sub" style="color:rgba(255,255,255,.4)">TB tháng này</div></div>
+        <div class="kpi"><div class="kpi-label">Tổng khách</div><div class="kpi-val" id="kpi-total-guests">0</div><div class="kpi-sub">Tất cả thời gian</div></div>
+        <div class="kpi"><div class="kpi-label">Khách VIP (3+ lần)</div><div class="kpi-val" id="kpi-vip-guests" style="color:var(--amber)">0</div><div class="kpi-sub">TB lần lưu trú</div></div>
+        <div class="kpi"><div class="kpi-label">Khách quay lại</div><div class="kpi-val" id="kpi-return-rate" style="color:var(--green)">0%</div><div class="kpi-sub">Lưu trú 2+ lần</div></div>
+        <div class="kpi dark"><div class="kpi-label">Doanh thu / khách</div><div class="kpi-val" id="kpi-rev-per-guest">0đ</div><div class="kpi-sub" style="color:rgba(255,255,255,.4)">TB tổng chi</div></div>
       </div>
       <div class="card">
         <div style="display:flex;gap:9px;margin-bottom:14px">
@@ -1493,38 +1435,42 @@ tr:hover td{background:rgba(26,138,90,.02)}
         </div>
         <table>
           <thead><tr><th>Khách hàng</th><th>Lần lưu trú</th><th>Tổng chi</th><th>Lần cuối</th><th>Kênh</th><th>Phân loại</th><th>Thao tác</th></tr></thead>
-          <tbody>
-            <tr><td><div class="guest-cell"><div class="guest-av g1">NL</div><div><div class="guest-name">Nguyễn Thị Lan</div><div class="guest-phone">0901 234 567 · Đà Nẵng</div></div></div></td><td style="font-weight:700">7 lần</td><td style="font-weight:700;color:var(--green)">4.900.000đ</td><td style="color:var(--muted);font-size:12px">15/06/2025</td><td><span class="badge bg-green">Trực tiếp</span></td><td><span class="badge bg-amber">⭐ VIP</span></td><td><div style="display:flex;gap:5px"><button class="btn" style="background:var(--bl);color:var(--blue);font-size:11px;padding:4px 8px" onclick="alert('Nhắn Zalo cho Nguyễn Thị Lan')">💬 Zalo</button><button class="btn btn-outline" style="font-size:11px;padding:4px 8px" onclick="alert('7 lần lưu trú · 4.9tr · 5★ đánh giá')">Lịch sử</button></div></td></tr>
-            <tr><td><div class="guest-cell"><div class="guest-av g2">TB</div><div><div class="guest-name">Trần Văn Bình</div><div class="guest-phone">0912 345 678 · Hà Nội</div></div></div></td><td style="font-weight:700">5 lần</td><td style="font-weight:700;color:var(--green)">3.250.000đ</td><td style="color:var(--muted);font-size:12px">18/06/2025</td><td><span class="badge" style="background:#003580;color:#fff">Booking.com</span></td><td><span class="badge bg-amber">⭐ VIP</span></td><td><div style="display:flex;gap:5px"><button class="btn" style="background:var(--bl);color:var(--blue);font-size:11px;padding:4px 8px">💬 Zalo</button><button class="btn btn-outline" style="font-size:11px;padding:4px 8px" onclick="alert('5 lần · 3.25tr · 4.8★')">Lịch sử</button></div></td></tr>
-            <tr><td><div class="guest-cell"><div class="guest-av g3">LC</div><div><div class="guest-name">Lê Thị Cẩm</div><div class="guest-phone">0923 456 789 · TP.HCM</div></div></div></td><td style="font-weight:700">3 lần</td><td style="font-weight:700;color:var(--green)">2.100.000đ</td><td style="color:var(--muted);font-size:12px">10/06/2025</td><td><span class="badge" style="background:#CC2229;color:#fff">Agoda</span></td><td><span class="badge bg-green">✓ Thường xuyên</span></td><td><div style="display:flex;gap:5px"><button class="btn" style="background:var(--bl);color:var(--blue);font-size:11px;padding:4px 8px">💬 Zalo</button><button class="btn btn-outline" style="font-size:11px;padding:4px 8px" onclick="alert('3 lần · 2.1tr · 5★')">Lịch sử</button></div></td></tr>
-            <tr><td><div class="guest-cell"><div class="guest-av g5">HH</div><div><div class="guest-name">Hoàng Thu Hà</div><div class="guest-phone">0945 678 901 · Đà Lạt</div></div></div></td><td style="font-weight:700">1 lần</td><td style="font-weight:700;color:var(--green)">700.000đ</td><td style="color:var(--muted);font-size:12px">21/06/2025</td><td><span class="badge" style="background:#003580;color:#fff">Booking.com</span></td><td><span class="badge" style="background:var(--bg);color:var(--muted)">Mới</span></td><td><div style="display:flex;gap:5px"><button class="btn" style="background:var(--bl);color:var(--blue);font-size:11px;padding:4px 8px">💬 Zalo</button><button class="btn btn-outline" style="font-size:11px;padding:4px 8px" onclick="alert('1 lần · 700K')">Lịch sử</button></div></td></tr>
-          </tbody>
+          <tbody id="guests-tbody"></tbody>
         </table>
-        <div style="padding:10px 0 0;font-size:11px;color:var(--muted);text-align:center">Hiển thị 4 / 247 khách · <a href="#" style="color:var(--green);font-weight:600">Xem thêm →</a></div>
       </div>
     </div>
     <!-- Staff -->
     <div id="gt-staff" style="display:none">
-      <div class="grid3" style="margin-bottom:14px">
-        <div class="staff-card"><div class="staff-header"><div class="staff-av g1">NT</div><div><div style="font-size:13px;font-weight:700;color:var(--dark)">Nguyễn Thành</div><span class="badge" style="background:#EDE9FE;color:#5B21B6;margin-top:3px;display:inline-block">Quản lý</span></div></div><div class="staff-stats"><div class="ss-box"><div class="ss-num">8</div><div class="ss-l">Phòng quản lý</div></div><div class="ss-box"><div class="ss-num">247</div><div class="ss-l">Tổng khách</div></div><div class="ss-box"><div class="ss-num">42.8tr</div><div class="ss-l">Doanh thu</div></div></div><div class="staff-footer"><div class="status-on">Đang online</div><button class="btn btn-outline" style="font-size:11px;padding:4px 9px" onclick="alert('Quyền: Toàn bộ hệ thống')">Quyền hạn</button></div></div>
-        <div class="staff-card"><div class="staff-header"><div class="staff-av g2">LA</div><div><div style="font-size:13px;font-weight:700;color:var(--dark)">Lê Thị Anh</div><span class="badge bg-blue" style="margin-top:3px;display:inline-block">Lễ tân</span></div></div><div class="staff-stats"><div class="ss-box"><div class="ss-num">31</div><div class="ss-l">Check-in</div></div><div class="ss-box"><div class="ss-num">29</div><div class="ss-l">Check-out</div></div><div class="ss-box"><div class="ss-num">4.9★</div><div class="ss-l">Đánh giá</div></div></div><div class="staff-footer"><div class="status-on">Đang online</div><button class="btn btn-outline" style="font-size:11px;padding:4px 9px" onclick="alert('Quyền lễ tân: Check-in/out, Xem lịch, Tạo booking')">Quyền hạn</button></div></div>
-        <div class="staff-card"><div class="staff-header"><div class="staff-av" style="background:var(--amber)">TM</div><div><div style="font-size:13px;font-weight:700;color:var(--dark)">Trần Văn Minh</div><span class="badge bg-green" style="margin-top:3px;display:inline-block">Buồng phòng</span></div></div><div class="staff-stats"><div class="ss-box"><div class="ss-num">28</div><div class="ss-l">Phòng đã dọn</div></div><div class="ss-box"><div class="ss-num">22p</div><div class="ss-l">Thời gian TB</div></div><div class="ss-box"><div class="ss-num">100%</div><div class="ss-l">Đúng hạn</div></div></div><div class="staff-footer"><div class="status-off">Offline</div><button class="btn btn-outline" style="font-size:11px;padding:4px 9px" onclick="alert('Quyền buồng phòng: Quản lý dọn phòng, Chụp ảnh')">Quyền hạn</button></div></div>
-      </div>
-      <div class="card" style="border:1.5px dashed var(--border);cursor:pointer;text-align:center;padding:28px" onclick="alert('Mời nhân viên mới qua email hoặc Zalo')">
-        <div style="font-size:28px;margin-bottom:9px">+</div>
-        <div style="font-size:13px;font-weight:700;color:var(--muted)">Mời nhân viên mới</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px">Gửi link mời qua Zalo hoặc email</div>
+      <div style="text-align:center;padding:48px 20px;color:var(--muted)">
+        <div style="font-size:40px;margin-bottom:14px">👤</div>
+        <div style="font-size:14px;font-weight:700;color:var(--dark);margin-bottom:6px">Tính năng nhân viên đang phát triển</div>
+        <div style="font-size:12px;margin-bottom:20px">Bạn có thể mời nhân viên tham gia quản lý homestay cùng bạn.</div>
+        <button class="btn btn-green" onclick="alert('Tính năng mời nhân viên sẽ sớm ra mắt!')">+ Mời nhân viên</button>
       </div>
     </div>
     <!-- Settings -->
     <div id="gt-settings" style="display:none">
       <div class="card">
         <div class="card-title" style="margin-bottom:18px">🏠 Thông tin cơ sở lưu trú</div>
-        <div class="s-item"><div><div class="s-label">Tên cơ sở</div></div><input class="s-input" value="Sunrise Homestay Đà Nẵng" style="width:240px"></div>
-        <div class="s-item"><div><div class="s-label">Địa chỉ</div></div><input class="s-input" value="123 Võ Nguyên Giáp, Đà Nẵng" style="width:280px"></div>
-        <div class="s-item"><div><div class="s-label">Số điện thoại</div></div><input class="s-input" value="0905 123 456" style="width:160px"></div>
-        <div class="s-item"><div><div class="s-label">Giờ nhận phòng mặc định</div></div><input type="time" class="s-input" value="14:00" style="width:100px"></div>
-        <div class="s-item"><div><div class="s-label">Giờ trả phòng mặc định</div></div><input type="time" class="s-input" value="12:00" style="width:100px"></div>
+        <div class="s-item"><div><div class="s-label">Tên cơ sở</div></div><input id="s-prop-name-input" class="s-input" placeholder="VD: Sunrise Homestay Đà Nẵng" style="width:240px"></div>
+        <div class="s-item"><div><div class="s-label">Địa chỉ</div></div><input id="s-prop-address" class="s-input" placeholder="Địa chỉ cơ sở" style="width:280px"></div>
+        <div class="s-item"><div><div class="s-label">Số điện thoại</div></div><input id="s-prop-phone" class="s-input" placeholder="0905 xxx xxx" style="width:160px"></div>
+        <div class="s-item"><div><div class="s-label">Giờ nhận phòng mặc định</div></div><input type="time" id="s-checkin-time" class="s-input" value="14:00" style="width:100px"></div>
+        <div class="s-item"><div><div class="s-label">Giờ trả phòng mặc định</div></div><input type="time" id="s-checkout-time" class="s-input" value="12:00" style="width:100px"></div>
+        <div style="text-align:right;margin-top:14px"><button class="btn btn-green" onclick="saveSettingsForm()">Lưu thay đổi</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">🛏️ Quản lý phòng</div>
+        <div id="rooms-list"></div>
+        <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:14px">
+          <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px">+ Thêm phòng mới</div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end">
+            <div><label style="font-size:11px;color:var(--muted)">Tên/Số phòng</label><input id="new-room-name" class="s-input" placeholder="VD: P.101" style="width:110px"></div>
+            <div><label style="font-size:11px;color:var(--muted)">Loại phòng</label><select id="new-room-type" class="s-input" style="width:110px"><option>Standard</option><option>Deluxe</option><option>Suite</option><option>Gia đình</option></select></div>
+            <div><label style="font-size:11px;color:var(--muted)">Giá/đêm (đ)</label><input id="new-room-price" type="number" class="s-input" placeholder="350000" style="width:120px"></div>
+            <button class="btn btn-green" style="font-size:12px;padding:8px 14px" onclick="addRoomFromForm()">+ Thêm</button>
+          </div>
+        </div>
       </div>
       <div class="card">
         <div class="card-title" style="margin-bottom:14px">🔔 Thông báo & Tự động hóa</div>
@@ -1532,8 +1478,7 @@ tr:hover td{background:rgba(26,138,90,.02)}
         <div class="s-item"><div><div class="s-label">Cảnh báo overbooking</div><div class="s-sub">Cảnh báo ngay khi phát hiện xung đột lịch</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
         <div class="s-item"><div><div class="s-label">Báo cáo doanh thu hàng ngày</div><div class="s-sub">Gửi tóm tắt qua Zalo lúc 22:00 mỗi tối</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
         <div class="s-item"><div><div class="s-label">Nhắc dọn phòng tự động</div><div class="s-sub">Thông báo nhân viên sau mỗi check-out</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
-        <div class="s-item"><div><div class="s-label">Gói hiện tại: Pro</div><div class="s-sub">35.000đ/phòng/tháng · 8 phòng · Hết hạn: 21/09/2025</div></div><button class="btn btn-green" style="font-size:12px" onclick="alert('Nâng cấp Business: AI Chatbot + Google Hotel Ads')">Nâng cấp</button></div>
-        <div style="text-align:right;margin-top:14px"><button class="btn btn-green" onclick="alert('Đã lưu cài đặt!')">Lưu thay đổi</button></div>
+        <div class="s-item"><div><div class="s-label">Gói hiện tại: Pro</div><div class="s-sub">35.000đ/phòng/tháng · Hết hạn: 21/09/2026</div></div><button class="btn btn-green" style="font-size:12px" onclick="alert('Nâng cấp Business: AI Chatbot + Google Hotel Ads')">Nâng cấp</button></div>
       </div>
     </div>
   </div>
@@ -1677,6 +1622,10 @@ function nav(screen) {
   }
 
   if (screen === 'reports') setTimeout(initCharts, 100)
+  if (screen === 'dashboard') setTimeout(async () => { await loadAllData(); renderDashboard() }, 50)
+  if (screen === 'calendar') setTimeout(async () => { await loadAllData(); renderCalendar() }, 50)
+  if (screen === 'guests') setTimeout(async () => { await loadAllData(); renderGuestsTable(); if(document.getElementById('gt-settings')?.style.display!=='none') renderSettingsForm() }, 50)
+  if (screen === 'booking') setTimeout(async () => { await loadAllData(); renderRoomPicker() }, 50)
   window.scrollTo(0, 0)
 }
 
@@ -1771,13 +1720,30 @@ function selectPay(el) {
   document.querySelectorAll('.pay-opt').forEach(p => p.classList.remove('sel'))
   el.classList.add('sel')
 }
-function submitBooking() {
-  const name = document.getElementById('bk-name').value
-  const phone = document.getElementById('bk-phone').value
+async function submitBooking() {
+  const name = document.getElementById('bk-name')?.value?.trim()
+  const phone = document.getElementById('bk-phone')?.value?.trim()
+  const ci = document.getElementById('bk-ci')?.value
+  const co = document.getElementById('bk-co')?.value
   if(!name || !phone) { alert('Vui lòng nhập tên và số điện thoại khách!'); return }
+  const roomText = document.getElementById('sum-room')?.textContent || ''
+  const selR = getRooms().find(r => roomText.startsWith(r.name))
+  const srcEl = document.querySelector('.source-opt.sel')
+  await addBooking({
+    roomId: selR?.id || null,
+    roomName: selR?.name || roomText.split(' —')[0],
+    guestName: name, guestPhone: phone,
+    checkin: ci, checkout: co,
+    totalAmount: bkRoomPrice * bkNights + bkSvcTotal,
+    amountPaid: 0,
+    source: srcEl?.textContent?.trim() || 'Trực tiếp',
+    status: 'upcoming'
+  })
   alert('✅ Đặt phòng thành công cho '+name+'!\n💬 Đã gửi xác nhận qua Zalo\n🏠 Phòng đã cập nhật trạng thái')
+  renderDashboard()
   nav('dashboard')
 }
+
 // ── CALENDAR TABS ──
 function calTab(tab) {
   document.getElementById('cal-view').style.display = tab==='cal' ? 'flex' : 'none'
@@ -1817,6 +1783,7 @@ function completeCheckin() {
 function completeCheckout() {
   closeModal('modal-checkout')
   alert('✅ Check-out hoàn tất!\n📄 Đã in hóa đơn.\n💬 Zalo tự gửi cảm ơn & xin đánh giá sau 2 giờ.\n🧹 Đã thông báo nhân viên dọn phòng.')
+  renderDashboard()
 }
 
 // ── ZALO CHATBOT ──
@@ -1864,6 +1831,8 @@ function guestTab(tab, el) {
   const titles = {guests:'👥 Khách hàng', staff:'👤 Nhân viên & Phân quyền', settings:'⚙️ Cài đặt hệ thống'}
   document.getElementById('guests-title').textContent = titles[tab]
   document.getElementById('guests-add-btn').style.display = tab==='settings' ? 'none' : 'block'
+  if (tab === 'settings') renderSettingsForm()
+  if (tab === 'guests') renderGuestsTable()
 }
 
 // ── CHARTS ──
@@ -1906,16 +1875,6 @@ function checkViewport() {
 }
 window.addEventListener('resize', checkViewport)
 
-// ── IOS ZOOM FIX: force 16px at focus time ──
-document.addEventListener('focusin', function(e) {
-  const el = e.target
-  if (['INPUT','SELECT','TEXTAREA'].includes(el.tagName)) el.style.fontSize = '16px'
-})
-document.addEventListener('focusout', function(e) {
-  const el = e.target
-  if (['INPUT','SELECT','TEXTAREA'].includes(el.tagName)) el.style.fontSize = ''
-})
-
 // ════════════════════════════════════
 // SUPABASE AUTH
 // ════════════════════════════════════
@@ -1954,7 +1913,7 @@ async function handleGoogleLogin() {
       el.style.display = 'block'
     }
   } catch(e) {
-    enterDemoMode() // Fallback nếu Supabase chưa cấu hình
+    showAuthError('Không thể kết nối Google. Vui lòng thử lại hoặc dùng email.')
   }
 }
 
@@ -2044,35 +2003,28 @@ async function handleAuth() {
 }
 
 // Sau khi auth thành công
-function onAuthSuccess(user) {
+async function onAuthSuccess(user) {
   currentUser = user
   console.log('✅ Logged in:', user.email)
-  // Cập nhật tên trong sidebar
   const nameEl = document.getElementById('sidebar-username')
   const emailEl = document.getElementById('sidebar-email')
   if (nameEl && user.user_metadata?.full_name) nameEl.textContent = user.user_metadata.full_name
   if (emailEl) emailEl.textContent = user.email
+  renderSidebar()
+  await loadAllData()
   nav('dashboard')
 }
 
 // Signup từ hero email form
 function heroSignup() {
-  console.log('[heroSignup] called')
   const emailInput = document.getElementById('hero-email-input')
   const email = emailInput ? emailInput.value.trim() : ''
-  try {
-    nav('auth')
-    console.log('[heroSignup] nav(auth) done')
-  } catch(e) {
-    console.error('[heroSignup] nav error:', e)
-    alert('Lỗi: ' + e.message)
-    return
-  }
+  nav('auth')
+  // Điền sẵn email vào form auth và chuyển sang tab đăng ký
   setTimeout(() => {
     const authEmail = document.getElementById('auth-email')
     if (authEmail && email) authEmail.value = email
     switchAuthTab('register')
-    console.log('[heroSignup] switchAuthTab done')
   }, 50)
 }
 
@@ -2093,7 +2045,7 @@ async function handleLogout() {
 
 // Kiểm tra session cũ khi load trang
 async function checkSession() {
-  if (!supabase) return // Không có Supabase → giữ landing
+  if (!supabase) return
   try {
     const { data: { session } } = await supabase.auth.getSession()
     if (session && session.user) {
@@ -2102,17 +2054,8 @@ async function checkSession() {
       return
     }
   } catch(e) {}
-  // Không có session → giữ landing (người dùng có thể tự click đăng ký)
 }
 
-// Cho phép Enter để submit form auth
-document.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter' && document.getElementById('screen-auth').classList.contains('active')) {
-    handleAuth()
-  }
-})
-
-// ── INIT ──
 // Lắng nghe thay đổi auth (quan trọng cho Google OAuth redirect)
 function setupAuthListener() {
   if (!supabase) return
@@ -2127,6 +2070,302 @@ function setupAuthListener() {
   })
 }
 
+// Cho phép Enter để submit form auth
+document.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && document.getElementById('screen-auth').classList.contains('active')) {
+    handleAuth()
+  }
+})
+
+// ════════════════════════════════════
+// DATA LAYER — Supabase
+// ════════════════════════════════════
+
+// Settings vẫn dùng localStorage (không có bảng riêng)
+function getSettings() { try { return JSON.parse(localStorage.getItem('hv_settings_'+(currentUser?.id||'guest'))) || {} } catch { return {} } }
+function saveSettings(data) { localStorage.setItem('hv_settings_'+(currentUser?.id||'guest'), JSON.stringify(data)); renderSidebar() }
+
+// ── MEMORY CACHE (sync access cho render functions) ──
+let _rooms = [], _bookings = [], _guests = []
+function getRooms() { return _rooms }
+function getBookings() { return _bookings }
+function getGuests() { return _guests }
+
+// ── FETCH TỪ SUPABASE ──
+async function fetchRooms() {
+  if (!supabase || !currentUser) return []
+  const { data } = await supabase.from('rooms').select('*').order('name')
+  return (data || []).map(r => ({ id:r.id, name:r.name, type:r.type, pricePerNight:r.price_per_night, status:r.status, notes:r.notes }))
+}
+async function fetchBookings() {
+  if (!supabase || !currentUser) return []
+  const { data } = await supabase.from('bookings').select('*').order('created_at', {ascending:false})
+  return (data || []).map(b => ({ id:b.id, roomId:b.room_id, roomName:b.room_name, guestName:b.guest_name, guestPhone:b.guest_phone, checkin:b.checkin_date, checkout:b.checkout_date, totalAmount:b.total_amount, amountPaid:b.amount_paid, source:b.source, status:b.status, createdAt:b.created_at }))
+}
+async function fetchGuests() {
+  if (!supabase || !currentUser) return []
+  const { data } = await supabase.from('guests').select('*').order('total_stays', {ascending:false})
+  return (data || []).map(g => ({ id:g.id, fullName:g.full_name, phone:g.phone, totalStays:g.total_stays, totalSpent:g.total_spent, source:g.source, lastStay:g.last_stay }))
+}
+async function loadAllData() {
+  ;[_rooms, _bookings, _guests] = await Promise.all([fetchRooms(), fetchBookings(), fetchGuests()])
+}
+
+// ── WRITE VÀO SUPABASE ──
+async function addRoom(r) {
+  if (!supabase || !currentUser) return
+  await supabase.from('rooms').insert({ user_id:currentUser.id, name:r.name, type:r.type, price_per_night:r.pricePerNight, status:'vacant' })
+  _rooms = await fetchRooms()
+}
+async function updateRoomStatus(id, status) {
+  if (!supabase || !currentUser) return
+  await supabase.from('rooms').update({ status }).eq('id', id)
+  _rooms = await fetchRooms()
+}
+async function deleteRoom(id) {
+  if (!confirm('Xoá phòng này?')) return
+  if (!supabase || !currentUser) return
+  await supabase.from('rooms').delete().eq('id', id)
+  _rooms = await fetchRooms()
+  renderRoomsSettings(); renderRoomGrid(); renderRoomPicker()
+}
+async function addBooking(b) {
+  if (!supabase || !currentUser) return null
+  const { data } = await supabase.from('bookings').insert({ user_id:currentUser.id, room_id:b.roomId||null, room_name:b.roomName, guest_name:b.guestName, guest_phone:b.guestPhone, checkin_date:b.checkin, checkout_date:b.checkout, total_amount:b.totalAmount, amount_paid:b.amountPaid||0, source:b.source, status:b.status||'upcoming' }).select().single()
+  _bookings = await fetchBookings()
+  return data
+}
+async function updateBookingStatus(id, status) {
+  if (!supabase || !currentUser) return
+  await supabase.from('bookings').update({ status }).eq('id', id)
+  _bookings = await fetchBookings()
+}
+async function upsertGuest(name, phone, amount, source) {
+  if (!supabase || !currentUser) return
+  const existing = _guests.find(g => (phone && g.phone===phone) || g.fullName===name)
+  if (existing) {
+    await supabase.from('guests').update({ total_stays:(existing.totalStays||0)+1, total_spent:(existing.totalSpent||0)+(amount||0), last_stay:today() }).eq('id', existing.id)
+  } else {
+    await supabase.from('guests').insert({ user_id:currentUser.id, full_name:name, phone:phone||null, source:source||'Trực tiếp', total_stays:1, total_spent:amount||0, last_stay:today() })
+  }
+  _guests = await fetchGuests()
+}
+
+// ── HELPERS ──
+const AV_COLORS=['g1','g2','g3','g4','g5']
+function initials(n){const p=n.trim().split(' ');return(p[0][0]+(p[p.length-1][0]||'')).toUpperCase()}
+function fmtDate(iso){if(!iso)return'';const d=new Date(iso+'T00:00:00');return('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)}
+function fmtMoney(n){return Number(n||0).toLocaleString('vi-VN')+'đ'}
+function today(){return new Date().toISOString().split('T')[0]}
+function avColor(name){return AV_COLORS[name.charCodeAt(0)%5]}
+function sourceBadge(src){
+  const map={'Booking.com':'style="background:#003580;color:#fff"','Agoda':'style="background:#CC2229;color:#fff"','Airbnb':'style="background:#FF5A5F;color:#fff"','Trực tiếp':'class="badge bg-green"','Zalo':'class="badge bg-blue"'}
+  return `<span class="badge" ${map[src]||''}>${src||'Trực tiếp'}</span>`
+}
+
+// ── RENDER DASHBOARD ──
+function renderDashboard() { renderKPIs(); renderRoomGrid(); renderActivityList(); renderBookingTable() }
+
+function renderKPIs() {
+  const bks=getBookings(), rooms=getRooms(), todayStr=today(), thisMonth=todayStr.slice(0,7)
+  const todayRev=bks.filter(b=>b.checkin<=todayStr&&b.checkout>todayStr&&b.status==='checkedin').reduce((s,b)=>s+(b.totalAmount/Math.max(1,Math.round((new Date(b.checkout)-new Date(b.checkin))/86400000))),0)
+  const occ=rooms.filter(r=>r.status==='occupied').length
+  const pct=rooms.length>0?Math.round(occ/rooms.length*100):0
+  const mBks=bks.filter(b=>b.createdAt?.startsWith(thisMonth)).length
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v}
+  set('kpi-rev-today',fmtMoney(todayRev)); set('kpi-occ',pct+'%'); set('kpi-occ-sub',occ+'/'+rooms.length+' phòng có khách')
+  set('kpi-bk-month',mBks); set('kpi-bk-sub','Tháng '+thisMonth.slice(5))
+}
+
+function renderRoomGrid() {
+  const el=document.getElementById('room-grid'); if(!el) return
+  const rooms=getRooms(), bks=getBookings(), todayStr=today()
+  if(!rooms.length){
+    el.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted)">
+      <div style="font-size:36px;margin-bottom:10px">🏠</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px">Chưa có phòng nào</div>
+      <div style="font-size:12px;margin-bottom:14px">Thêm phòng trong Cài đặt để bắt đầu</div>
+      <button class="btn btn-green" onclick="nav('guests');setTimeout(()=>guestTab('settings',document.querySelectorAll('.tab-btn')[2]),100)">+ Thêm phòng →</button>
+    </div>`; return
+  }
+  el.innerHTML=rooms.map(r=>{
+    const aBk=bks.find(b=>b.roomId===r.id&&b.checkin<=todayStr&&b.checkout>todayStr&&b.status==='checkedin')
+    const tBk=bks.find(b=>b.roomId===r.id&&b.checkin===todayStr&&b.status==='upcoming')
+    let cls='available',st='Trống',gt='Nhấn để đặt',badge='',oc=`onclick="nav('booking')"`
+    if(r.status==='cleaning'){cls='cleaning';st='Đang dọn';gt='Chờ dọn phòng'}
+    else if(tBk){cls='checkin';st='Check-in hôm nay';gt=tBk.guestName;badge=`<span class="rc-badge bg-blue">Hôm nay</span>`;oc=`onclick="openCheckinModal('${tBk.guestName.replace(/'/g,'').replace(/"/g,'')}','${r.name}')"`}
+    else if(aBk){cls='occupied';st='Có khách';gt=aBk.guestName;oc=`onclick="alert('${r.name} — ${aBk.guestName}\\nCheck-in: ${fmtDate(aBk.checkin)} | Check-out: ${fmtDate(aBk.checkout)}\\n${fmtMoney(aBk.totalAmount)}')"`}
+    return `<div class="room-card ${cls}" ${oc}><div class="rc-num">${r.name}</div><div class="rc-status">${st}</div><div class="rc-guest">${gt}</div>${badge}</div>`
+  }).join('')
+}
+
+function renderRoomPicker() {
+  const el=document.getElementById('room-picker'); if(!el) return
+  const rooms=getRooms(), bks=getBookings(), todayStr=today()
+  if(!rooms.length){
+    el.innerHTML=`<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Chưa có phòng. <button class="btn btn-outline" style="font-size:11px;padding:4px 9px;margin-left:6px" onclick="nav('guests');setTimeout(()=>guestTab('settings',document.querySelectorAll('.tab-btn')[2]),100)">+ Thêm phòng</button></div>`; return
+  }
+  el.innerHTML=rooms.map((r,i)=>{
+    const occ=bks.some(b=>b.roomId===r.id&&b.checkin<=todayStr&&b.checkout>todayStr&&(b.status==='checkedin'||b.status==='upcoming'))
+    if(occ) return `<div class="room-opt occ"><div class="ro-num">${r.name}</div><div class="ro-type">${r.type}</div><div class="ro-occ">Có khách</div></div>`
+    return `<div class="room-opt${i===0?' sel':''}" onclick="selectRoom(this,'${r.name}','${r.type}',${r.pricePerNight})"><div class="ro-num">${r.name}</div><div class="ro-type">${r.type}</div><div class="ro-price">${Math.round(r.pricePerNight/1000)}K/đêm</div></div>`
+  }).join('')
+  const first=rooms.find(r=>!bks.some(b=>b.roomId===r.id&&b.checkin<=todayStr&&b.checkout>todayStr))
+  if(first){bkRoomPrice=first.pricePerNight;const s=document.getElementById('sum-room');if(s)s.textContent=first.name+' — '+first.type;updateBkTotal()}
+}
+
+function renderActivityList() {
+  const el=document.getElementById('activity-list'); if(!el) return
+  const bks=getBookings().slice(-8).reverse()
+  if(!bks.length){el.innerHTML=`<div style="text-align:center;padding:30px;color:var(--muted);font-size:12px">Chưa có hoạt động nào</div>`;return}
+  const icons={checkedin:'📥',checkedout:'🏃',upcoming:'📋',cancelled:'❌'}
+  const bgs={checkedin:'var(--gl)',checkedout:'var(--al)',upcoming:'var(--bg)'}
+  const labels={checkedin:'Check-in',checkedout:'Check-out',upcoming:'Booking mới'}
+  el.innerHTML=bks.map(b=>`<div class="activity-item">
+    <div class="ai-icon" style="background:${bgs[b.status]||'var(--bg)'}">${icons[b.status]||'📋'}</div>
+    <div><div class="ai-text"><strong>${labels[b.status]||'Booking'}</strong> — ${b.guestName}${b.roomName?', '+b.roomName:''}</div>
+    <div class="ai-time">${fmtDate(b.createdAt?.split('T')[0])||'Vừa xong'} · ${fmtMoney(b.totalAmount)}</div></div>
+    ${sourceBadge(b.source)}
+  </div>`).join('')
+}
+
+function renderBookingTable() {
+  const tbody=document.getElementById('booking-tbody'); if(!tbody) return
+  const bks=getBookings(), todayStr=today(), tomStr=new Date(Date.now()+86400000).toISOString().split('T')[0]
+  const rel=bks.filter(b=>b.checkin===todayStr||b.checkin===tomStr||(b.checkout===todayStr&&b.status==='checkedin'))
+  if(!rel.length){tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;font-size:12px">Không có check-in/check-out hôm nay hoặc ngày mai</td></tr>`;return}
+  tbody.innerHTML=rel.map(b=>{
+    const isToday=b.checkin===todayStr, isCO=b.checkout===todayStr&&b.status==='checkedin'
+    const badge=isCO?'<span class="badge bg-amber">Trả phòng</span>':isToday?'<span class="badge bg-blue">Check-in hôm nay</span>':b.status==='checkedin'?'<span class="badge bg-green">Đang ở</span>':'<span class="badge" style="background:var(--bg);color:var(--muted)">Sắp đến</span>'
+    const action=isToday?`<button class="btn btn-green" style="font-size:11px;padding:5px 10px" onclick="openCheckinModal('${b.guestName.replace(/'/g,'')}','${b.roomName||''}')">Check-in</button>`:isCO?`<button class="btn btn-outline" style="font-size:11px;padding:5px 10px" onclick="openCheckoutModal()">Check-out</button>`:`<button class="btn btn-outline" style="font-size:11px;padding:5px 10px">Xem</button>`
+    return `<tr><td><div class="guest-cell"><div class="guest-av ${avColor(b.guestName)}">${initials(b.guestName)}</div><div><div class="guest-name">${b.guestName}</div><div class="guest-phone">${b.guestPhone||''}</div></div></div></td><td>${b.roomName||'—'}</td><td>${isToday?'Hôm nay':fmtDate(b.checkin)}</td><td>${fmtDate(b.checkout)}</td><td>${sourceBadge(b.source)}</td><td style="font-weight:700">${fmtMoney(b.totalAmount)}</td><td>${badge}</td><td>${action}</td></tr>`
+  }).join('')
+}
+
+// ── RENDER GUESTS ──
+function renderGuestsTable() {
+  const tbody=document.getElementById('guests-tbody'); if(!tbody) return
+  const guests=getGuests()
+  if(!guests.length){
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px;font-size:12px"><div style="font-size:32px;margin-bottom:10px">👥</div>Chưa có khách hàng. Khách sẽ tự thêm vào khi bạn tạo booking và check-out.</td></tr>`
+  } else {
+    tbody.innerHTML=guests.map(g=>{
+      const tag=g.totalStays>=3?'<span class="badge bg-amber">⭐ VIP</span>':g.totalStays>1?'<span class="badge bg-green">✓ Thường xuyên</span>':'<span class="badge" style="background:var(--bg);color:var(--muted)">Mới</span>'
+      return `<tr><td><div class="guest-cell"><div class="guest-av ${avColor(g.fullName)}">${initials(g.fullName)}</div><div><div class="guest-name">${g.fullName}</div><div class="guest-phone">${g.phone||''}</div></div></div></td><td style="font-weight:700">${g.totalStays} lần</td><td style="font-weight:700;color:var(--green)">${fmtMoney(g.totalSpent)}</td><td style="color:var(--muted);font-size:12px">${g.lastStay||'—'}</td><td>${sourceBadge(g.source)}</td><td>${tag}</td><td><div style="display:flex;gap:5px"><button class="btn" style="background:var(--bl);color:var(--blue);font-size:11px;padding:4px 8px">💬 Zalo</button><button class="btn btn-outline" style="font-size:11px;padding:4px 8px" onclick="alert('${g.fullName}\\n${g.totalStays} lần lưu trú · ${fmtMoney(g.totalSpent)}')">Lịch sử</button></div></td></tr>`
+    }).join('')
+  }
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v}
+  s('kpi-total-guests',guests.length); s('kpi-vip-guests',guests.filter(g=>g.totalStays>=3).length)
+  const ret=guests.length?Math.round(guests.filter(g=>g.totalStays>1).length/guests.length*100):0
+  s('kpi-return-rate',ret+'%')
+  const avg=guests.length?Math.round(guests.reduce((s,g)=>s+g.totalSpent,0)/guests.length):0
+  s('kpi-rev-per-guest',fmtMoney(avg))
+}
+
+// ── RENDER CALENDAR ──
+function renderCalendar() {
+  const rooms=getRooms(), bks=getBookings(), todayStr=today()
+  const base=new Date(); base.setDate(base.getDate()-3)
+  const days=Array.from({length:14},(_,i)=>{const d=new Date(base);d.setDate(d.getDate()+i);return d.toISOString().split('T')[0]})
+  const dayNames=['CN','T2','T3','T4','T5','T6','T7']
+  const head=document.getElementById('cal-head')
+  if(head) head.innerHTML=`<div class="tg-rl">Phòng</div>`+days.map(d=>{const dt=new Date(d+'T00:00:00');const t=d===todayStr;return`<div class="tg-day${t?' today':''}"><div class="tg-day-n">${dt.getDate()}</div><div class="tg-day-l">${dayNames[dt.getDay()]}${t?' ●':''}</div></div>`}).join('')
+  const body=document.getElementById('cal-body')
+  if(body){
+    if(!rooms.length){body.innerHTML=`<div style="text-align:center;padding:40px;color:var(--muted);font-size:12px">Chưa có phòng nào</div>`;return}
+    body.innerHTML=rooms.map(r=>{
+      const cells=days.map(d=>{
+        const bk=bks.find(b=>b.roomId===r.id&&b.checkin<=d&&b.checkout>d)
+        const isStart=bk&&bk.checkin===d
+        return `<div class="tg-cell${d===todayStr?' today-col':''}">${isStart?`<div class="bb bb-green" onclick="alert('${bk.guestName} · ${r.name}\\n${fmtDate(bk.checkin)}→${fmtDate(bk.checkout)} · ${fmtMoney(bk.totalAmount)}')">${bk.guestName}</div>`:''}</div>`
+      }).join('')
+      return `<div class="tg-row"><div class="tg-room">${r.name}<span class="tg-rt">${r.type}</span></div>${cells}</div>`
+    }).join('')
+  }
+  renderCIView()
+}
+
+function renderCIView() {
+  const bks=getBookings(), todayStr=today()
+  const cis=bks.filter(b=>b.checkin===todayStr&&b.status==='upcoming')
+  const cos=bks.filter(b=>b.checkout===todayStr&&b.status==='checkedin')
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v}
+  s('ci-count',cis.length+' khách'); s('co-count',cos.length+' khách')
+  const mkCard=(b,isCO)=>{
+    const nights=Math.round((new Date(b.checkout)-new Date(b.checkin))/86400000)
+    const rem=(b.totalAmount||0)-(b.amountPaid||0)
+    if(!isCO) return `<div class="ci-card urgent"><div class="ci-head"><div class="ci-guest"><div class="ci-av" style="background:var(--blue)">${initials(b.guestName)}</div><div><div class="ci-name">${b.guestName}</div><div class="ci-phone">${b.guestPhone||''}</div></div></div><span class="badge bg-blue">Check-in hôm nay</span></div><div class="ci-details"><div class="ci-det"><div class="ci-det-l">Phòng</div><div class="ci-det-v">${b.roomName||'—'}</div></div><div class="ci-det"><div class="ci-det-l">Nguồn</div><div class="ci-det-v">${b.source||'Trực tiếp'}</div></div><div class="ci-det"><div class="ci-det-l">Số đêm</div><div class="ci-det-v">${nights} đêm</div></div><div class="ci-det"><div class="ci-det-l">Tổng tiền</div><div class="ci-det-v" style="color:var(--green)">${fmtMoney(b.totalAmount)}</div></div></div><div class="ci-actions"><button class="ci-btn blue" onclick="openCheckinModal('${b.guestName.replace(/'/g,'')}','${b.roomName||''}');doCheckin('${b.id}')">📋 Check-in + Quét CCCD</button>${b.guestPhone?`<button class="ci-btn ghost" onclick="alert('Gọi ${b.guestPhone}')">📞</button>`:''}</div></div>`
+    return `<div class="ci-card co-card"><div class="ci-head"><div class="ci-guest"><div class="ci-av" style="background:var(--green)">${initials(b.guestName)}</div><div><div class="ci-name">${b.guestName}</div><div class="ci-phone">${b.guestPhone||''}</div></div></div><span class="badge bg-amber">Trả phòng 12:00</span></div><div class="ci-details"><div class="ci-det"><div class="ci-det-l">Phòng</div><div class="ci-det-v">${b.roomName||'—'}</div></div><div class="ci-det"><div class="ci-det-l">Đã ở</div><div class="ci-det-v">${nights} đêm</div></div><div class="ci-det"><div class="ci-det-l">Tiền phòng</div><div class="ci-det-v">${fmtMoney(b.totalAmount)}</div></div><div class="ci-det"><div class="ci-det-l">Còn nợ</div><div class="ci-det-v" style="color:${rem>0?'var(--red)':'var(--green)'}">${rem>0?fmtMoney(rem):'0đ ✓'}</div></div></div><div class="ci-actions"><button class="ci-btn green" onclick="doCheckout('${b.id}')">✓ Check-out & In hóa đơn</button><button class="ci-btn ghost">💬 Nhắn Zalo</button></div></div>`
+  }
+  const ciq=document.getElementById('ci-queue')
+  if(ciq) ciq.innerHTML=cis.length?cis.map(b=>mkCard(b,false)).join(''):`<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Không có check-in hôm nay</div>`
+  const coq=document.getElementById('co-queue')
+  if(coq) coq.innerHTML=cos.length?cos.map(b=>mkCard(b,true)).join(''):`<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Không có check-out hôm nay</div>`
+}
+
+// ── CHECK-IN / CHECK-OUT ACTIONS ──
+async function doCheckin(bkId) {
+  setTimeout(async ()=>{
+    const b=getBookings().find(x=>x.id===bkId)
+    await updateBookingStatus(bkId,'checkedin')
+    if(b&&b.roomId) await updateRoomStatus(b.roomId,'occupied')
+    renderDashboard(); renderCalendar()
+  },500)
+}
+async function doCheckout(bkId) {
+  const b=getBookings().find(x=>x.id===bkId)
+  if(b){
+    await updateBookingStatus(bkId,'checkedout')
+    if(b.roomId) await updateRoomStatus(b.roomId,'vacant')
+    await upsertGuest(b.guestName,b.guestPhone,b.totalAmount,b.source)
+  }
+  closeModal('modal-checkout')
+  alert('✅ Check-out hoàn tất!\n💬 Zalo tự gửi cảm ơn & xin đánh giá sau 2 giờ.\n🧹 Đã thông báo nhân viên dọn phòng.')
+  renderDashboard(); renderCalendar(); renderGuestsTable()
+}
+
+// ── SIDEBAR ──
+function renderSidebar() {
+  const s=getSettings()
+  const n=document.getElementById('s-prop-name'); if(n) n.textContent=s.propertyName||'Homestay của bạn'
+  const m=document.getElementById('s-prop-meta'); if(m) m.textContent=(s.city||'')+(getRooms().length?' · '+getRooms().length+' phòng':'')+' · Gói Pro'
+}
+
+// ── SETTINGS FORM ──
+function renderSettingsForm() {
+  const s=getSettings()
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||''}
+  set('s-prop-name-input',s.propertyName); set('s-prop-address',s.address)
+  set('s-prop-phone',s.phone); set('s-checkin-time',s.checkInTime||'14:00'); set('s-checkout-time',s.checkOutTime||'12:00')
+  renderRoomsSettings()
+}
+function saveSettingsForm() {
+  const g=id=>{const e=document.getElementById(id);return e?e.value:''}
+  saveSettings({propertyName:g('s-prop-name-input'),address:g('s-prop-address'),phone:g('s-prop-phone'),checkInTime:g('s-checkin-time'),checkOutTime:g('s-checkout-time')})
+  renderRoomGrid(); renderRoomPicker(); alert('✅ Đã lưu cài đặt!')
+}
+function renderRoomsSettings() {
+  const el=document.getElementById('rooms-list'); if(!el) return
+  const rooms=getRooms()
+  if(!rooms.length){el.innerHTML=`<div style="text-align:center;padding:16px;color:var(--muted);font-size:12px">Chưa có phòng nào. Thêm phòng bên dưới.</div>`;return}
+  el.innerHTML=rooms.map(r=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:7px">
+    <div style="flex:1"><div style="font-size:13px;font-weight:700">${r.name}</div><div style="font-size:11px;color:var(--muted)">${r.type} · ${fmtMoney(r.pricePerNight)}/đêm</div></div>
+    <select style="font-size:11px;padding:4px 8px" onchange="updateRoomStatus('${r.id}',this.value);renderRoomGrid()"><option value="vacant" ${r.status==='vacant'?'selected':''}>Trống</option><option value="occupied" ${r.status==='occupied'?'selected':''}>Có khách</option><option value="cleaning" ${r.status==='cleaning'?'selected':''}>Đang dọn</option><option value="maintenance" ${r.status==='maintenance'?'selected':''}>Bảo trì</option></select>
+    <button class="btn btn-outline" style="font-size:11px;padding:4px 9px;color:var(--red);border-color:var(--red)" onclick="deleteRoom('${r.id}')">Xoá</button>
+  </div>`).join('')
+}
+async function addRoomFromForm() {
+  const n=document.getElementById('new-room-name')?.value?.trim()
+  const t=document.getElementById('new-room-type')?.value||'Standard'
+  const p=parseInt(document.getElementById('new-room-price')?.value)||0
+  if(!n){alert('Vui lòng nhập tên/số phòng!');return}
+  await addRoom({name:n,type:t,pricePerNight:p,status:'vacant'})
+  if(document.getElementById('new-room-name')) document.getElementById('new-room-name').value=''
+  if(document.getElementById('new-room-price')) document.getElementById('new-room-price').value=''
+  renderRoomsSettings(); renderRoomGrid(); renderRoomPicker(); renderSidebar()
+}
+
+// ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
   // Hiện trang trước — tránh trang trắng nếu JS lỗi sau
   document.getElementById('app-wrapper').style.display = 'none'
@@ -2135,8 +2374,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('screen-landing').style.display = 'flex'
   document.getElementById('screen-auth').style.display = 'none'
   try { calcNights() } catch(e) {}
-  checkViewport()
-  // Nếu có session Supabase → tự động vào app
+  // Hiển thị ngày hôm nay
+  const todayBadge = document.getElementById('today-badge')
+  if (todayBadge) {
+    const d = new Date()
+    const days = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7']
+    todayBadge.textContent = days[d.getDay()] + ', ' + d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear()
+  }
   const ok = initSupabase()
   if (ok) {
     setupAuthListener()
