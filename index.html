@@ -761,7 +761,7 @@ tr:hover td{background:rgba(26,138,90,.02)}
       <a href="#features" onclick="scrollTo({top:700,behavior:'smooth'});return false">Tính năng</a>
       <a href="#pricing" onclick="scrollTo({top:2200,behavior:'smooth'});return false">Bảng giá</a>
     </div>
-    <button class="btn btn-green" onclick="heroSignup()">Dùng thử miễn phí →</button>
+    <button class="btn btn-green" onclick="const e=document.getElementById('hero-email-input');if(e&&e.value.trim()){heroSignup()}else{e.focus();scrollTo({top:300,behavior:'smooth'})}">Dùng thử miễn phí →</button>
   </nav>
   <div class="hero">
     <div class="hero-inner">
