@@ -2057,14 +2057,22 @@ function onAuthSuccess(user) {
 
 // Signup từ hero email form
 function heroSignup() {
+  console.log('[heroSignup] called')
   const emailInput = document.getElementById('hero-email-input')
   const email = emailInput ? emailInput.value.trim() : ''
-  nav('auth')
-  // Điền sẵn email vào form auth và chuyển sang tab đăng ký
+  try {
+    nav('auth')
+    console.log('[heroSignup] nav(auth) done')
+  } catch(e) {
+    console.error('[heroSignup] nav error:', e)
+    alert('Lỗi: ' + e.message)
+    return
+  }
   setTimeout(() => {
     const authEmail = document.getElementById('auth-email')
     if (authEmail && email) authEmail.value = email
     switchAuthTab('register')
+    console.log('[heroSignup] switchAuthTab done')
   }, 50)
 }
 
