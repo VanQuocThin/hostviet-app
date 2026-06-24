@@ -1946,7 +1946,7 @@ async function handleGoogleLogin() {
   try {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.href }
+      options: { redirectTo: window.location.origin }
     })
     if (error) {
       const el = document.getElementById('auth-error')
@@ -2105,6 +2105,20 @@ document.addEventListener('keypress', (e) => {
 })
 
 // ── INIT ──
+// Lắng nghe thay đổi auth (quan trọng cho Google OAuth redirect)
+function setupAuthListener() {
+  if (!supabase) return
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session && session.user && !currentUser) {
+      currentUser = session.user
+      onAuthSuccess(session.user)
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null
+      nav('landing')
+    }
+  })
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Hiện trang trước — tránh trang trắng nếu JS lỗi sau
   document.getElementById('app-wrapper').style.display = 'none'
@@ -2116,7 +2130,10 @@ document.addEventListener('DOMContentLoaded', () => {
   checkViewport()
   // Nếu có session Supabase → tự động vào app
   const ok = initSupabase()
-  if (ok) checkSession()
+  if (ok) {
+    setupAuthListener()
+    checkSession()
+  }
 })
 </script>
 </body>
